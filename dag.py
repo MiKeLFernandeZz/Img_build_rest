@@ -8,7 +8,7 @@ from airflow.models import Variable
     schedule_interval='0 12 * * *', 
     start_date=datetime(2024, 6, 25),
     catchup=False,
-    tags=['test', 'build_image'],
+    tags=['core', 'img_build'],
 )
 def DAG_image_build_REST():
 
