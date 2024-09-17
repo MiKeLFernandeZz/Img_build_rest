@@ -5,7 +5,7 @@ from airflow.models import Variable
 
 @dag(
     description='Generate Docker image',
-    schedule_interval='0 12 * * *', 
+    schedule_interval=None, 
     start_date=datetime(2024, 6, 25),
     catchup=False,
     tags=['core', 'img_build'],
@@ -67,10 +67,10 @@ def DAG_image_build_REST():
         from kaniko import Kaniko, KanikoSnapshotMode
 
         path = '/git/Img_build_rest/docker'
-        user = kwargs['dag_run'].conf['user']
-        password = kwargs['dag_run'].conf['pass']
-        endpoint = kwargs['dag_run'].conf['endpoint'] # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
-        requirements = kwargs['dag_run'].conf['requirements']
+        user = kwargs['dag_run'].conf.get('user')
+        password = kwargs['dag_run'].conf.get('pass')
+        endpoint = kwargs['dag_run'].conf.get('endpoint') # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
+        requirements = kwargs['dag_run'].conf.get('requirements')
         print(requirements, user, password, endpoint)
 
         # Guardar el requirements.txt en la carpeta del Dockerfile
