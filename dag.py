@@ -11,6 +11,12 @@ from airflow.models import Variable
     tags=['core', 'img_build'],
 )
 def DAG_image_build_REST():
+    
+    user = "{{ dag_run.conf.get('user') }}"
+    password = "{{ dag_run.conf.get('password') }}"
+    endpoint = "{{ dag_run.conf.get('endpoint') }}"
+    requirements = "{{ dag_run.conf.get('requirements') }}"
+    print(requirements, user, password, endpoint)
 
     env_vars={
         "POSTGRES_USERNAME": Variable.get("POSTGRES_USERNAME"),
@@ -26,7 +32,11 @@ def DAG_image_build_REST():
         "MLFLOW_TRACKING_URI": Variable.get("MLFLOW_ENDPOINT"),
         "MLFLOW_TRACKING_USERNAME": Variable.get("MLFLOW_TRACKING_USERNAME"),
         "MLFLOW_TRACKING_PASSWORD": Variable.get("MLFLOW_TRACKING_PASSWORD"),
-        "container": "docker"
+        "container": "docker",
+        "requirements": requirements,
+        "user": user,
+        "pass": password,
+        "endpoint": endpoint
     }
 
     volume_mount = k8s.V1VolumeMount(
@@ -61,16 +71,16 @@ def DAG_image_build_REST():
         ),
         env_vars=env_vars
     )
-    def image_build_task(**kwargs):
+    def image_build_task():
         import logging
         import os
         from kaniko import Kaniko, KanikoSnapshotMode
 
         path = '/git/Img_build_rest/docker'
-        user = kwargs['dag_run'].conf.get('user')
-        password = kwargs['dag_run'].conf.get('pass')
-        endpoint = kwargs['dag_run'].conf.get('endpoint') # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
-        requirements = kwargs['dag_run'].conf.get('requirements')
+        user = os.getenv('user')
+        password = os.getenv('pass')
+        endpoint = os.getenv("endpoint") # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
+        requirements = os.getenv("requirements")
         print(requirements, user, password, endpoint)
 
         # Guardar el requirements.txt en la carpeta del Dockerfile
