@@ -10,7 +10,7 @@ from airflow.models import Variable
     catchup=False,
     tags=['test', 'build_image'],
 )
-def DAG_image_build_dag():
+def DAG_image_build_REST():
 
     env_vars={
         "POSTGRES_USERNAME": Variable.get("POSTGRES_USERNAME"),
@@ -173,4 +173,4 @@ def DAG_image_build_dag():
     # Define the order of the pipeline
     image_build_result
 # Call the DAG 
-DAG_image_build_dag()
+DAG_image_build_REST()
