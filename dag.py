@@ -84,7 +84,7 @@ def DAG_image_build_REST():
         print(requirements, user, password, endpoint)
 
         # Guardar el requirements.txt en la carpeta del Dockerfile
-        os.makedirs(os.path.dirname(path), exist_ok=True)
+        os.makedirs(os.path.dirname(f'{path}/requirements.txt'), exist_ok=True)
 
         with open(f'{path}/requirements.txt', 'w') as f:
             f.write(requirements)
