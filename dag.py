@@ -131,7 +131,7 @@ def DAG_image_build_REST():
         os.makedirs(os.path.dirname(f'{path}/requirements.txt'), exist_ok=True)
 
         with open(f'{path}/requirements.txt', 'w') as f:
-            f.write(requirements + '\n')
+            f.write(requirements)
 
         # Construir y subir la imagen
         logging.warning("Building and pushing image")
