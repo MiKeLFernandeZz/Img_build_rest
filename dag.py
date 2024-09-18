@@ -67,7 +67,7 @@ def DAG_image_build_REST():
         do_xcom_push=True,
         container_resources=k8s.V1ResourceRequirements(
             requests={'cpu': '0.5'},
-            limits={'cpu': '0.8'}
+            limits={'cpu': '1'}
         ),
         env_vars=env_vars
     )
