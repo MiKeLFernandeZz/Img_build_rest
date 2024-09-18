@@ -83,6 +83,7 @@ def DAG_image_build_REST():
         password = os.getenv('pass')
         endpoint = os.getenv("endpoint") # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
         requirements = os.getenv("requirements")
+        python_version = os.getenv("python_version")
 
         # Verificar si los paquetes 'mlflow', 'redis' y 'psycopg2-binary==2.9.1' están en la cadena de requirements
         if 'mlflow' not in requirements:
