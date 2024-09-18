@@ -77,6 +77,7 @@ def DAG_image_build_REST():
         import logging
         import os
         from kaniko import Kaniko, KanikoSnapshotMode
+        import re
 
         path = '/git/Img_build_rest/docker'
         user = os.getenv('user')
