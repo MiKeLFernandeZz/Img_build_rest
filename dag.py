@@ -108,6 +108,9 @@ def DAG_image_build_REST():
                     if linea.startswith('FROM python:'):
                         # Reemplazar la versión de Python
                         archivo.write(f'FROM python:{python_version}\n')
+                    if linea.startswith('RUN pip install --no-cache-dir -r'):
+                        # Reemplazar la versión de Python
+                        archivo.write(f'RUN pip install --no-cache-dir {requirements}\n')
                     else:
                         archivo.write(linea)
 
@@ -128,10 +131,10 @@ def DAG_image_build_REST():
 
         # requirements = '\n'.join(lineas_sanitizadas)
 
-        os.makedirs(os.path.dirname(f'{path}/requirements.txt'), exist_ok=True)
+        # os.makedirs(os.path.dirname(f'{path}/requirements.txt'), exist_ok=True)
 
-        with open(f'{path}/requirements.txt', 'w') as f:
-            f.write(requirements)
+        # with open(f'{path}/requirements.txt', 'w') as f:
+        #     f.write(requirements)
 
         # Construir y subir la imagen
         logging.warning("Building and pushing image")
