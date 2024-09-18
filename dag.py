@@ -81,6 +81,16 @@ def DAG_image_build_REST():
         password = os.getenv('pass')
         endpoint = os.getenv("endpoint") # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
         requirements = os.getenv("requirements")
+
+        # Verificar si los paquetes 'mlflow', 'redis' y 'psycopg2-binary==2.9.1' están en la cadena de requirements
+        if 'mlflow' not in requirements:
+            requirements += 'mlflow\n'
+        if 'redis' not in requirements:
+            requirements += 'redis\n'
+        if 'psycopg2-binary==2.9.1' not in requirements:
+            requirements += 'psycopg2-binary==2.9.1\n'
+
+
         print(requirements, user, password, endpoint)
 
         # Guardar el requirements.txt en la carpeta del Dockerfile
@@ -92,22 +102,22 @@ def DAG_image_build_REST():
         # Construir y subir la imagen
         logging.warning("Building and pushing image")
         kaniko = Kaniko()
-        # if(user and password):
-        #     kaniko.build(
-        #         dockerfile=f'{path}/Dockerfile',
-        #         context=path,
-        #         destination=endpoint,
-        #         snapshot_mode=KanikoSnapshotMode.full,
-        #         registry_username=user,
-        #         registry_password=password,
-        #     )
-        # else:
-        #     kaniko.build(
-        #         dockerfile=f'{path}/Dockerfile',
-        #         context=path,
-        #         destination=endpoint,
-        #         snapshot_mode=KanikoSnapshotMode.full
-        #     )
+        if(user and password):
+            kaniko.build(
+                dockerfile=f'{path}/Dockerfile',
+                context=path,
+                destination=endpoint,
+                snapshot_mode=KanikoSnapshotMode.full,
+                registry_username=user,
+                registry_password=password,
+            )
+        else:
+            kaniko.build(
+                dockerfile=f'{path}/Dockerfile',
+                context=path,
+                destination=endpoint,
+                snapshot_mode=KanikoSnapshotMode.full
+            )
 
     # @task.kubernetes(
     #     image='mfernandezlabastida/kaniko:1.0',

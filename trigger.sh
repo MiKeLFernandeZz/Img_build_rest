@@ -14,12 +14,22 @@ MY_VARIABLE="value_$(date +%s)"  # Valor dinámico basado en el timestamp actual
 URL="${BASE_URL}/api/v1/dags/${DAG_ID}/dagRuns"
 
 # Cuerpo de la solicitud en formato JSON, que incluye la variable en conf
+# POST_DATA=$(cat <<EOF
+# {
+#   "conf": {
+#     "user": "ikerlan",
+#     "password": "ikerlan",
+#     "endpoint": "registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/image:1.0",
+#     "requirements": "$REQUIREMENTS"
+#   },
+#   "dag_run_id": "manual__$(date +%s)"
+# }
+# EOF
+# )
 POST_DATA=$(cat <<EOF
 {
   "conf": {
-    "user": "ikerlan",
-    "password": "ikerlan",
-    "endpoint": "test",
+    "endpoint": "registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/image:1.0",
     "requirements": "$REQUIREMENTS"
   },
   "dag_run_id": "manual__$(date +%s)"
@@ -30,16 +40,16 @@ EOF
 echo $POST_DATA
 
 # Realiza la solicitud POST usando curl
-response=$(curl -X POST "$URL" \
-  -H "Content-Type: application/json" \
-  -u "$USERNAME:$PASSWORD" \
-  -d "$POST_DATA")
+# response=$(curl -X POST "$URL" \
+#   -H "Content-Type: application/json" \
+#   -u "$USERNAME:$PASSWORD" \
+#   -d "$POST_DATA")
 
-# Verifica la respuesta
-if echo "$response" | grep -q '"dag_run_id"'; then
-  echo "DAG ejecutado con éxito."
-  echo "Respuesta de Airflow: $response"
-else
-  echo "Error al ejecutar el DAG."
-  echo "Respuesta de Airflow: $response"
-fi
+# # Verifica la respuesta
+# if echo "$response" | grep -q '"dag_run_id"'; then
+#   echo "DAG ejecutado con éxito."
+#   echo "Respuesta de Airflow: $response"
+# else
+#   echo "Error al ejecutar el DAG."
+#   echo "Respuesta de Airflow: $response"
+# fi
