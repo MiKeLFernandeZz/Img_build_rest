@@ -17,7 +17,7 @@ def DAG_image_build_REST():
     endpoint = "{{ dag_run.conf.get('endpoint') }}"
     requirements = "{{ dag_run.conf.get('requirements') }}"
     python_version = "{{ dag_run.conf.get('python_version') }}"
-    print(requirements, user, password, endpoint)
+    # print(requirements, user, password, endpoint)
 
     env_vars={
         "POSTGRES_USERNAME": Variable.get("POSTGRES_USERNAME"),
@@ -96,6 +96,7 @@ def DAG_image_build_REST():
         #     requirements += 'psycopg2-binary==2.9.1\n'
 
         logging.warning(f"Requirements: {requirements}")
+        logging.warning(f"User: {user}")
 
         # Modificar la version de Python del Dockerfile
         if python_version:
