@@ -111,6 +111,21 @@ def DAG_image_build_REST():
 
 
         # Guardar el requirements.txt en la carpeta del Dockerfile
+        lineas_sanitizadas = []
+    
+        for linea in requirements.splitlines():
+            # Elimina espacios al inicio y final de cada línea
+            linea = linea.strip()
+            
+            # Usa una expresión regular para eliminar caracteres no permitidos
+            linea_sanitizada = re.sub(r'[^a-zA-Z0-9_\-\.==]', '', linea)
+            
+            # Añade la línea sanitizada a la lista si no está vacía
+            if linea_sanitizada:
+                lineas_sanitizadas.append(linea_sanitizada)
+
+        requirements = '\n'.join(lineas_sanitizadas)
+
         os.makedirs(os.path.dirname(f'{path}/requirements.txt'), exist_ok=True)
 
         with open(f'{path}/requirements.txt', 'w') as f:
