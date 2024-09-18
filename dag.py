@@ -87,12 +87,12 @@ def DAG_image_build_REST():
         python_version = os.getenv("python_version")
 
         # Verificar si los paquetes 'mlflow', 'redis' y 'psycopg2-binary==2.9.1' están en la cadena de requirements
-        if 'mlflow' not in requirements:
-            requirements += 'mlflow\n'
-        if 'redis' not in requirements:
-            requirements += 'redis\n'
-        if 'psycopg2-binary==2.9.1' not in requirements:
-            requirements += 'psycopg2-binary==2.9.1\n'
+        # if 'mlflow' not in requirements:
+        #     requirements += 'mlflow\n'
+        # if 'redis' not in requirements:
+        #     requirements += 'redis\n'
+        # if 'psycopg2-binary==2.9.1' not in requirements:
+        #     requirements += 'psycopg2-binary==2.9.1\n'
 
         print(f"Requirements: {requirements}")
 
