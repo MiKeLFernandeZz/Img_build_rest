@@ -76,7 +76,7 @@ def DAG_image_build_REST():
         import os
         from kaniko import Kaniko, KanikoSnapshotMode
 
-        path = '/git/Img_build_rest/docker'
+        path = '/git/img_build_rest/docker'
         user = os.getenv('user')
         password = os.getenv('pass')
         endpoint = os.getenv("endpoint") # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'

@@ -40,16 +40,16 @@ EOF
 echo $POST_DATA
 
 # Realiza la solicitud POST usando curl
-# response=$(curl -X POST "$URL" \
-#   -H "Content-Type: application/json" \
-#   -u "$USERNAME:$PASSWORD" \
-#   -d "$POST_DATA")
+response=$(curl -X POST "$URL" \
+  -H "Content-Type: application/json" \
+  -u "$USERNAME:$PASSWORD" \
+  -d "$POST_DATA")
 
-# # Verifica la respuesta
-# if echo "$response" | grep -q '"dag_run_id"'; then
-#   echo "DAG ejecutado con éxito."
-#   echo "Respuesta de Airflow: $response"
-# else
-#   echo "Error al ejecutar el DAG."
-#   echo "Respuesta de Airflow: $response"
-# fi
+# Verifica la respuesta
+if echo "$response" | grep -q '"dag_run_id"'; then
+  echo "DAG ejecutado con éxito."
+  echo "Respuesta de Airflow: $response"
+else
+  echo "Error al ejecutar el DAG."
+  echo "Respuesta de Airflow: $response"
+fi
