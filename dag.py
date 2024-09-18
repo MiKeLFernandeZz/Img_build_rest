@@ -78,7 +78,7 @@ def DAG_image_build_REST():
         import logging
         import os
         from kaniko import Kaniko, KanikoSnapshotMode
-        import re
+        import time
 
         path = '/git/Img_build_rest/docker'
         user = os.getenv('user')
@@ -136,6 +136,7 @@ def DAG_image_build_REST():
         # Construir y subir la imagen
         logging.warning("Building and pushing image")
         kaniko = Kaniko()
+        time.sleep(5)
         if(user and password):
             kaniko.build(
                 dockerfile=f'{path}/Dockerfile',
