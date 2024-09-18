@@ -6,6 +6,8 @@ WORKDIR /app
 # Copia el archivo requirements.txt al directorio de trabajo
 COPY requirements.txt .
 
+# COPY model.pkl .
+# COPY server.py .
 # RUN pip install --upgrade pip
 
 
