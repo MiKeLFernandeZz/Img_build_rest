@@ -142,6 +142,7 @@ def DAG_image_build_REST():
         kaniko = Kaniko()
         time.sleep(5)
         if(user and password):
+            logging.warning(f"Logging with user and password")
             kaniko.build(
                 dockerfile=f'{path}/Dockerfile',
                 context=path,
@@ -151,6 +152,7 @@ def DAG_image_build_REST():
                 registry_password=password,
             )
         else:
+            logging.warning(f"Logging without user and password")
             kaniko.build(
                 dockerfile=f'{path}/Dockerfile',
                 context=path,
