@@ -95,7 +95,7 @@ def DAG_image_build_REST():
         # if 'psycopg2-binary==2.9.1' not in requirements:
         #     requirements += 'psycopg2-binary==2.9.1\n'
 
-        print(f"Requirements: {requirements}")
+        logging.warning(f"Requirements: {requirements}")
 
         # Modificar la version de Python del Dockerfile
         if python_version:
