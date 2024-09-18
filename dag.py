@@ -136,22 +136,22 @@ def DAG_image_build_REST():
         # Construir y subir la imagen
         logging.warning("Building and pushing image")
         kaniko = Kaniko()
-        if(user and password):
-            kaniko.build(
-                dockerfile=f'{path}/Dockerfile',
-                context=path,
-                destination=endpoint,
-                snapshot_mode=KanikoSnapshotMode.full,
-                registry_username=user,
-                registry_password=password,
-            )
-        else:
-            kaniko.build(
-                dockerfile=f'{path}/Dockerfile',
-                context=path,
-                destination=endpoint,
-                snapshot_mode=KanikoSnapshotMode.full
-            )
+        # if(user and password):
+        #     kaniko.build(
+        #         dockerfile=f'{path}/Dockerfile',
+        #         context=path,
+        #         destination=endpoint,
+        #         snapshot_mode=KanikoSnapshotMode.full,
+        #         registry_username=user,
+        #         registry_password=password,
+        #     )
+        # else:
+        #     kaniko.build(
+        #         dockerfile=f'{path}/Dockerfile',
+        #         context=path,
+        #         destination=endpoint,
+        #         snapshot_mode=KanikoSnapshotMode.full
+        #     )
 
     # @task.kubernetes(
     #     image='mfernandezlabastida/kaniko:1.0',
