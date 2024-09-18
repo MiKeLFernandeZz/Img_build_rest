@@ -92,10 +92,22 @@ def DAG_image_build_REST():
         if 'psycopg2-binary==2.9.1' not in requirements:
             requirements += 'psycopg2-binary==2.9.1\n'
 
+        print(f"Requirements: {requirements}")
 
-        print(requirements, user, password, endpoint)
-        print(path)
-        print(os.listdir(path))
+        # Modificar la version de Python del Dockerfile
+        if python_version:
+            with open(f'{path}/Dockerfile', 'r') as archivo:
+                lineas = archivo.readlines()
+
+            # Modificar la línea que contiene el FROM
+            with open(f'{path}/Dockerfile', 'w') as archivo:
+                for linea in lineas:
+                    if linea.startswith('FROM python:'):
+                        # Reemplazar la versión de Python
+                        archivo.write(f'FROM python:{python_version}\n')
+                    else:
+                        archivo.write(linea)
+
 
         # Guardar el requirements.txt en la carpeta del Dockerfile
         os.makedirs(os.path.dirname(f'{path}/requirements.txt'), exist_ok=True)
