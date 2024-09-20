@@ -109,14 +109,14 @@ def DAG_image_build_REST():
         logging.warning(f"User: {user}")
 
         # Sustituir la versión de Python en el Dockerfile
-        with open(f'{path}/Dockerfile', 'r', encoding='utf-8') as file:
-            content = file.read()
+        # with open(f'{path}/Dockerfile', 'r', encoding='utf-8') as file:
+        #     content = file.read()
 
-        content = content.replace('{{PYTHON_VERSION}}', python_version)
-        content = content.replace('{{REQUIREMENTS}}', requirements)
+        # content = content.replace('{{PYTHON_VERSION}}', python_version)
+        # content = content.replace('{{REQUIREMENTS}}', requirements)
 
-        with open(f'{path}/Dockerfile', 'w', encoding='utf-8') as file:
-            file.write(content)
+        # with open(f'{path}/Dockerfile', 'w', encoding='utf-8') as file:
+        #     file.write(content)
 
         # Modificar la version de Python del Dockerfile
         # if python_version:
@@ -158,7 +158,11 @@ def DAG_image_build_REST():
                 destination=endpoint,
                 snapshot_mode=KanikoSnapshotMode.full,
                 cache=False,
-                verbosity=KanikoVerbosity.debug
+                verbosity=KanikoVerbosity.debug,
+                build_args={
+                    'PYTHON_VERSION': python_version,
+                    'REQUIREMENTS': requirements
+                }
             )
 
     image_build_result = image_build_task()

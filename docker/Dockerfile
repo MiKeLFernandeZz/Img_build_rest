@@ -1,4 +1,4 @@
-FROM python:{{PYTHON_VERSION}}
+FROM python:${PYTHON_VERSION}
 
 # Establece el directorio de trabajo en /app
 WORKDIR /app 
@@ -7,4 +7,4 @@ WORKDIR /app
 # COPY requirements.txt .
 
 # Instala las dependencias especificadas en el archivo requirements.txt
-RUN pip install --no-cache-dir {{REQUIREMENTS}}
+RUN pip install --no-cache-dir ${REQUIREMENTS}
