@@ -167,8 +167,7 @@ def DAG_image_build_REST():
                 cache=False,
                 verbosity=KanikoVerbosity.debug,
                 build_args={
-                    'PYTHON_VERSION': python_version,
-                    'REQUIREMENTS': requirements
+                    'PYTHON_VERSION': python_version
                 }
             )
 
