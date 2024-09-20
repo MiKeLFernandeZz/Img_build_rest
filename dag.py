@@ -94,6 +94,7 @@ def DAG_image_build_REST():
 
         # Verificar si se debe usar GPU
         if use_gpu == 'true':
+            logging.warning("Using GPU")
             path = '/git/Img_build_rest/docker_gpus'
 
         # Verificar si las dependencias se encuentran en el requirements.txt
