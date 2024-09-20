@@ -10,4 +10,4 @@ WORKDIR /app
 RUN echo "${REQUIREMENTS}" > requirements.txt
 
 # Instala las dependencias especificadas en el archivo temporal
-RUN pip install --no-cache-dir requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt

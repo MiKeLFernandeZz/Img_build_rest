@@ -108,6 +108,13 @@ def DAG_image_build_REST():
         logging.warning(f"Requirements: {requirements}")
         logging.warning(f"User: {user}")
 
+        # requirement format --> 'package1==1.0.0 package2==2.0.0'
+        packages = requirements.split()
+
+        with open('requirements.txt', 'w') as f:
+            for package in packages:
+                f.write(package + '\n')
+
         # Sustituir la versión de Python en el Dockerfile
         # with open(f'{path}/Dockerfile', 'r', encoding='utf-8') as file:
         #     content = file.read()
