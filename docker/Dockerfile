@@ -5,6 +5,7 @@ FROM python:3.9.17
 WORKDIR /app 
 
 # Crear un archivo temporal para las dependencias
+COPY requirements.txt .
 
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --no-cache-dir -r requirements.txt
