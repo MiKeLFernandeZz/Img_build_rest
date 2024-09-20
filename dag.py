@@ -156,7 +156,9 @@ def DAG_image_build_REST():
                 dockerfile=f'{path}/Dockerfile',
                 context=path,
                 destination=endpoint,
-                snapshot_mode=KanikoSnapshotMode.full
+                snapshot_mode=KanikoSnapshotMode.full,
+                cache=False,
+                verbosity='debug'
             )
 
     # @task.kubernetes(
