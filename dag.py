@@ -109,13 +109,13 @@ def DAG_image_build_REST():
         logging.warning(f"User: {user}")
 
         # Sustituir la versión de Python en el Dockerfile
-        with open(f'{path}/Dockerfile', 'r') as file:
+        with open(f'{path}/Dockerfile', 'r', encoding='utf-8') as file:
             content = file.read()
 
         content = content.replace('{{PYTHON_VERSION}}', python_version)
         content = content.replace('{{REQUIREMENTS}}', requirements)
 
-        with open(f'{path}/Dockerfile', 'w') as file:
+        with open(f'{path}/Dockerfile', 'w', encoding='utf-8') as file:
             file.write(content + '\n')
 
         # Modificar la version de Python del Dockerfile
