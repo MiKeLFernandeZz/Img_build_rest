@@ -97,12 +97,12 @@ def DAG_image_build_REST():
             path = '/git/Img_build_rest/docker_gpus'
 
         # Verificar si las dependencias se encuentran en el requirements.txt
-        requirements_list = requirements.split()
-        for package in required_packages:
-            if package not in requirements_list:
-                requirements_list.append(package)
+        # requirements_list = requirements.split()
+        # for package in required_packages:
+        #     if package not in requirements_list:
+        #         requirements_list.append(package)
 
-        requirements = ' '.join(requirements_list)
+        # requirements = ' '.join(requirements_list)
 
         logging.warning(f"Requirements: {requirements}")
         logging.warning(f"User: {user}")
