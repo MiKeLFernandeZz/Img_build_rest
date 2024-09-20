@@ -7,7 +7,7 @@ FROM python:${PYTHON_VERSION}
 WORKDIR /app 
 
 # Crear un archivo temporal para las dependencias
-RUN echo "${REQUIREMENTS}" > requirements.txt
+# RUN echo "${REQUIREMENTS}" > requirements.txt
 
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --no-cache-dir -r requirements.txt
