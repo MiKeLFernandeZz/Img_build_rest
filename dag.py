@@ -93,7 +93,7 @@ def DAG_image_build_REST():
         path = '/git/Img_build_rest/docker'
 
         # Verificar si se debe usar GPU
-        if use_gpu == 'True':
+        if use_gpu == 'true':
             path = '/git/Img_build_rest/docker_gpus'
 
         # Verificar si las dependencias se encuentran en el requirements.txt
