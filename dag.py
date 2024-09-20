@@ -80,62 +80,57 @@ def DAG_image_build_REST():
         from kaniko import Kaniko, KanikoSnapshotMode
         import time
 
-        path = '/git/Img_build_rest/docker'
         user = os.getenv('user')
         password = os.getenv('pass')
         endpoint = os.getenv("endpoint") # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
         requirements = os.getenv("requirements")
         python_version = os.getenv("python_version")
+        use_gpu = os.getenv("use_gpu")
+        required_packages = ['mlflow', 'redis', 'psycopg2-binary']
 
-        # Verificar si los paquetes 'mlflow', 'redis' y 'psycopg2-binary==2.9.1' están en la cadena de requirements
-        # if 'mlflow' not in requirements:
-        #     requirements += 'mlflow\n'
-        # if 'redis' not in requirements:
-        #     requirements += 'redis\n'
-        # if 'psycopg2-binary==2.9.1' not in requirements:
-        #     requirements += 'psycopg2-binary==2.9.1\n'
+        path = '/git/Img_build_rest/docker'
+
+        # Verificar si se debe usar GPU
+        if use_gpu == 'True':
+            path = '/git/Img_build_rest/docker_gpus'
+
+        # Verificar si las dependencias se encuentran en el requirements.txt
+        requirements_list = requirements.split()
+        for package in required_packages:
+            if package not in requirements_list:
+                requirements_list.append(package)
+
+        requirements = ' '.join(requirements_list)
 
         logging.warning(f"Requirements: {requirements}")
         logging.warning(f"User: {user}")
 
+        # Sustituir la versión de Python en el Dockerfile
+        with open(f'{path}/Dockerfile', 'r') as file:
+            content = file.read()
+
+        content = content.replace('{{PYTHON_VERSION}}', python_version)
+
+        with open(f'{path}/Dockerfile', 'w') as file:
+            file.write(content)
+
         # Modificar la version de Python del Dockerfile
-        if python_version:
-            with open(f'{path}/Dockerfile', 'r') as archivo:
-                lineas = archivo.readlines()
+        # if python_version:
+        #     with open(f'{path}/Dockerfile', 'r') as archivo:
+        #         lineas = archivo.readlines()
 
-            # Modificar la línea que contiene el FROM
-            with open(f'{path}/Dockerfile', 'w') as archivo:
-                for linea in lineas:
-                    if linea.startswith('FROM python:'):
-                        # Reemplazar la versión de Python
-                        archivo.write(f'FROM python:{python_version}\n')
-                    if linea.startswith('RUN pip install --no-cache-dir -r'):
-                        # Reemplazar la versión de Python
-                        archivo.write(f'RUN pip install --no-cache-dir {requirements}\n')
-                    else:
-                        archivo.write(linea)
+        #     # Modificar la línea que contiene el FROM
+        #     with open(f'{path}/Dockerfile', 'w') as archivo:
+        #         for linea in lineas:
+        #             if linea.startswith('FROM python:'):
+        #                 # Reemplazar la versión de Python
+        #                 archivo.write(f'FROM python:{python_version}\n')
+        #             if linea.startswith('RUN pip install --no-cache-dir -r'):
+        #                 # Reemplazar la versión de Python
+        #                 archivo.write(f'RUN pip install --no-cache-dir {requirements}\n')
+        #             else:
+        #                 archivo.write(linea)
 
-
-        # Guardar el requirements.txt en la carpeta del Dockerfile
-        # lineas_sanitizadas = []
-    
-        # for linea in requirements.splitlines():
-        #     # Elimina espacios al inicio y final de cada línea
-        #     linea = linea.strip()
-            
-        #     # Usa una expresión regular para eliminar caracteres no permitidos
-        #     linea_sanitizada = re.sub(r'[^a-zA-Z0-9_\-\.==]', '', linea)
-            
-        #     # Añade la línea sanitizada a la lista si no está vacía
-        #     if linea_sanitizada:
-        #         lineas_sanitizadas.append(linea_sanitizada)
-
-        # requirements = '\n'.join(lineas_sanitizadas)
-
-        # os.makedirs(os.path.dirname(f'{path}/requirements.txt'), exist_ok=True)
-
-        # with open(f'{path}/requirements.txt', 'w') as f:
-        #     f.write(requirements)
 
         # Construir y subir la imagen
         logging.warning("Building and pushing image")

@@ -1,2 +1,0 @@
-model_name: ElasticNet(alpha=0.5, l1_ratio=0.5)
-model_version: '33'

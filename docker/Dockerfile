@@ -1,4 +1,4 @@
-FROM python:3.9.18
+FROM python:{{PYTHON_VERSION}}
 
 # Establece el directorio de trabajo en /app
 WORKDIR /app 
