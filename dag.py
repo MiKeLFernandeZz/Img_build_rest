@@ -139,7 +139,7 @@ def DAG_image_build_REST():
         # Construir y subir la imagen
         logging.warning("Building and pushing image")
         kaniko = Kaniko()
-        time.sleep(5)
+        # time.sleep(5)
         if(user and password):
             logging.warning(f"Logging with user and password")
             kaniko.build(
