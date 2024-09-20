@@ -111,7 +111,7 @@ def DAG_image_build_REST():
         # requirement format --> 'package1==1.0.0 package2==2.0.0'
         packages = requirements.split()
 
-        with open(f'{path}/Dockerfile', 'w') as f:
+        with open(f'{path}/requirements.txt', 'w') as f:
             for package in packages:
                 f.write(package + '\n')
 
