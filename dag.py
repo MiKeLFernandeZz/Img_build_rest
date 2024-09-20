@@ -164,11 +164,7 @@ def DAG_image_build_REST():
                 context=path,
                 destination=endpoint,
                 snapshot_mode=KanikoSnapshotMode.full,
-                cache=False,
                 verbosity=KanikoVerbosity.debug,
-                build_args={
-                    'PYTHON_VERSION': python_version
-                }
             )
 
     image_build_result = image_build_task()
