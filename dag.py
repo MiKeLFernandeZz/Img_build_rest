@@ -116,7 +116,7 @@ def DAG_image_build_REST():
         content = content.replace('{{REQUIREMENTS}}', requirements)
 
         with open(f'{path}/Dockerfile', 'w') as file:
-            file.write(content)
+            file.write(content + '\n')
 
         # Modificar la version de Python del Dockerfile
         # if python_version:
