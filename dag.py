@@ -112,6 +112,7 @@ def DAG_image_build_REST():
             content = file.read()
 
         content = content.replace('{{PYTHON_VERSION}}', python_version)
+        content = content.replace('{{REQUIREMENTS}}', requirements)
 
         with open(f'{path}/Dockerfile', 'w') as file:
             file.write(content)

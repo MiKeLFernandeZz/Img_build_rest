@@ -26,11 +26,7 @@ RUN ln -s /usr/local/bin/python3.8 /usr/bin/python3 && \
     ln -s /usr/local/bin/pip3.8 /usr/bin/pip
 
 # Instala las dependencias de tu aplicación
-RUN pip install torch==1.12.1 \
-    torchvision==0.13.1 \
-    redis \
-    mlflow \
-    pandas
+RUN pip install --no-cache-dir {{REQUIREMENTS}}
 
 # Limpia los archivos de instalación
 RUN rm -rf /Python-{{PYTHON_VERSION}}*
