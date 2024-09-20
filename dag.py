@@ -17,6 +17,7 @@ def DAG_image_build_REST():
     endpoint = "{{ dag_run.conf.get('endpoint') }}"
     requirements = "{{ dag_run.conf.get('requirements') }}"
     python_version = "{{ dag_run.conf.get('python_version') }}"
+    use_gpu = "{{ dag_run.conf.get('use_gpu') }}"
     # print(requirements, user, password, endpoint)
 
     env_vars={
@@ -39,6 +40,7 @@ def DAG_image_build_REST():
         "pass": password,
         "endpoint": endpoint,
         "python_version": python_version,
+        "use_gpu": use_gpu
     }
 
     volume_mount = k8s.V1VolumeMount(
