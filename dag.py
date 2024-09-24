@@ -53,9 +53,10 @@ def DAG_image_build_REST():
         name="create-config",
         image="alpine:latest",
         command=["sh", "-c"],
+        env_vars=env_vars,
         args=[
             "mkdir -p /kaniko/.docker && "
-            "auth=$(echo -n '{{ dag_run.conf.get('user') }}:{{ dag_run.conf.get('password') }}' | base64) && "
+            "auth=$(echo -n '$user:$pass' | base64) && "
             "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
             "cat /kaniko/.docker/config.json"
         ],
