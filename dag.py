@@ -1,5 +1,4 @@
 from datetime import datetime
-import subprocess
 from airflow.decorators import dag, task
 from kubernetes.client import models as k8s
 from airflow.models import Variable
@@ -75,8 +74,9 @@ def DAG_image_build_REST():
         import logging
         import os
         # from kaniko import Kaniko, KanikoSnapshotMode, KanikoVerbosity
-        import docker
         import time
+        import subprocess
+
 
         user = os.getenv('user')
         password = os.getenv('pass')
