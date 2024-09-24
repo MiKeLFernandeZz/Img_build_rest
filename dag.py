@@ -73,8 +73,7 @@ def DAG_image_build_REST():
             requests={'cpu': '1'},
             limits={'cpu': '1.5'}
         ),
-        env_vars=env_vars,
-        get_logs=True
+        env_vars=env_vars
     )
     def image_build_task():
         import logging
