@@ -112,9 +112,9 @@ def DAG_image_build_REST():
         # requirement format --> 'package1==1.0.0 package2==2.0.0'
         packages = requirements.split()
 
-        # with open(f'{path}/requirements.txt', 'w') as f:
-        #     for package in packages:
-        #         f.write(package + '\n')
+        with open(f'{path}/requirements.txt', 'w') as f:
+            for package in packages:
+                f.write(package + '\n')
 
         # Sustituir la versión de Python en el Dockerfile
         # with open(f'{path}/Dockerfile', 'r', encoding='utf-8') as file:
@@ -165,6 +165,9 @@ def DAG_image_build_REST():
                 context=path,
                 destination=endpoint,
                 snapshot_mode=KanikoSnapshotMode.full,
+                build_args={
+                    'PYTHON_VERSION': python_version
+                }
                 # verbosity=KanikoVerbosity.debug,
             )
 
