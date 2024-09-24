@@ -84,6 +84,7 @@ def DAG_image_build_REST():
         python_version = os.getenv("python_version")
         use_gpu = os.getenv("use_gpu")
         required_packages = ['mlflow', 'redis', 'psycopg2-binary']
+        docker_registry_uri = 'https://index.docker.io/v1/'
 
         path = '/git/Img_build_rest/docker'
 
@@ -184,7 +185,7 @@ def DAG_image_build_REST():
             
             # Authenticate to Docker registry
             logging.warning(f"Logging in to Docker registry {endpoint}...")
-            client.login(username=user, password=password, registry=endpoint)
+            client.login(username=user, password=password, registry=docker_registry_uri)
 
             # Push the Docker image
             logging.warning(f"Pushing Docker image {endpoint} to {endpoint}...")
