@@ -52,7 +52,7 @@ def DAG_image_build_REST():
         image="alpine:latest",
         command=["sh", "-c"],
         args=[
-            f'echo \'{{"auths": {{"https://index.docker.io/v1/": {{"auth": "$(echo -n {user}:{password} | base64)"}}}}}}}\' > /config/config.json'
+            f'echo \'{{"auths": {{"https://index.docker.io/v1/": {{"auth": "$(echo -n {user}:{password} | base64)"}}}}}}\' > /config/config.json'
         ],
         volume_mounts=[k8s.V1VolumeMount(mount_path="/config", name="docker-config")]
     )
