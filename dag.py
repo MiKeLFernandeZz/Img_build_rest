@@ -61,7 +61,7 @@ def DAG_image_build_REST():
     )
 
     @task.kubernetes(
-        image='mfernandezlabastida/build_image:docker',
+        image='gcr.io/kaniko-project/executor:latest',
         name='image_build',
         task_id='image_build',
         namespace='airflow',
@@ -175,28 +175,15 @@ def DAG_image_build_REST():
         # os.system("docker build -t my-image:latest .")
         # os.system("docker push my-image:latest")
 
-        client = docker.from_env()
-        try:
-            # Build the Docker image
-            logging.warning(f"Building Docker image {endpoint}...")
-            image, logs = client.images.build(path=f'{path}/Dockerfile', tag=endpoint)
-            for log in logs:
-                print(log)
-            
-            # Authenticate to Docker registry
-            logging.warning(f"Logging in to Docker registry {endpoint}...")
-            client.login(username=user, password=password, registry=docker_registry_uri)
+        kaniko_command = f"""
+        /kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --insecure --skip-tls-verify --force --verbosity=debug
+        """
 
-            # Push the Docker image
-            logging.warning(f"Pushing Docker image {endpoint} to {endpoint}...")
-            response = client.images.push(repository=endpoint)
-            logging.warning(response)
+        # Añadir autenticación si es necesario
+        if user and password:
+            kaniko_command += f" --registry-mirror {docker_registry_uri} --registry-username={user} --registry-password={password}"
 
-            logging.warning(f"Image {endpoint} pushed successfully.")
-        except docker.errors.DockerException as e:
-            logging.warning(f"Error during Docker operation: {e}")
-        finally:
-            client.close()
+        logging.warning(f"Running Kaniko build with command: {kaniko_command}")
 
     image_build_result = image_build_task()
     # image_build_mlflow_result = image_build_mlflow_task('51e9022a0c2442da9c6e7b130b56defc')
