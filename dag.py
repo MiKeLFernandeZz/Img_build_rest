@@ -61,7 +61,7 @@ def DAG_image_build_REST():
     )
 
     @task.kubernetes(
-        image='bitnami/kaniko:latest',
+        image='mfernandezlabastida/kaniko:1.0',
         name='image_build',
         task_id='image_build',
         namespace='airflow',
