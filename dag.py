@@ -59,7 +59,7 @@ def DAG_image_build_REST():
         ],
         args=[
             "mkdir -p /kaniko/.docker && "
-            "auth=$(echo -n '${user}:${pass}' | base64) && "
+            "auth=$(echo -n \"${user}:${pass}\" | base64) && "
             "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
             "cat /kaniko/.docker/config.json"
         ],
