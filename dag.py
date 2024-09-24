@@ -53,7 +53,10 @@ def DAG_image_build_REST():
         name="create-config",
         image="alpine:latest",
         command=["sh", "-c"],
-        env_vars=env_vars,
+        env=[
+            k8s.V1EnvVar(name="user", value=user),
+            k8s.V1EnvVar(name="pass", value=password)
+        ],
         args=[
             "mkdir -p /kaniko/.docker && "
             "auth=$(echo -n '$user:$pass' | base64) && "
