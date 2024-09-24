@@ -203,7 +203,9 @@ def DAG_image_build_REST():
             logging.error(f"Kaniko build failed with error: {e.stderr}")
             raise Exception(f"Kaniko build failed: {e.stderr}")
     
-    # Define the order of the pipeline
     image_build_result = image_build_task()
+
+    # Define the order of the pipeline
+    image_build_result
 # Call the DAG 
 DAG_image_build_REST()
