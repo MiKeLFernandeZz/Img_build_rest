@@ -107,6 +107,7 @@ def DAG_image_build_REST():
 
         logging.warning(f"Requirements: {requirements}")
         logging.warning(f"User: {user}")
+        logging.warning(f"Path: {path}")
 
         # requirement format --> 'package1==1.0.0 package2==2.0.0'
         packages = requirements.split()
