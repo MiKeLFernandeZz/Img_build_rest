@@ -183,7 +183,8 @@ def DAG_image_build_REST():
         if user and password:
             kaniko_command += f" --registry-mirror {docker_registry_uri} --registry-username={user} --registry-password={password}"
 
-        logging.warning(f"Running Kaniko build with command: {kaniko_command}")
+        # logging.warning(f"Running Kaniko build with command: {kaniko_command}")
+        os.system(f"sh -c '{kaniko_command}'")
 
     image_build_result = image_build_task()
     # image_build_mlflow_result = image_build_mlflow_task('51e9022a0c2442da9c6e7b130b56defc')
