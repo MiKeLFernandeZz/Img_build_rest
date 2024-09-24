@@ -10,3 +10,5 @@ COPY requirements.txt .
 
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "app.py"]
