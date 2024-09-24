@@ -160,6 +160,7 @@ def DAG_image_build_REST():
                 snapshot_mode=KanikoSnapshotMode.full,
                 registry_username=user,
                 registry_password=password,
+                log_level='debug',
             )
         else:
             logging.warning(f"Logging without user and password")
