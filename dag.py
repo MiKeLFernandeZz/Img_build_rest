@@ -54,11 +54,10 @@ def DAG_image_build_REST():
         image="alpine:latest",
         command=["sh", "-c"],
         args=[
-            "auth=$(echo -n '{{ dag_run.conf.get('user') }}:{{ dag_run.conf.get('password') }}' | base64) && "
-            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /config/config.json && "
-            "cat /config/config.json"  # Para depuración, imprime el contenido del archivo
+            "mkdir -p /kaniko/.docker && "
+            "echo '{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}' > /kaniko/.docker/config.json"
         ],
-        volume_mounts=[k8s.V1VolumeMount(mount_path="/config", name="docker-config")]
+        volume_mounts=[k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")]
     )
 
     # Contenedor para clonar el repositorio
