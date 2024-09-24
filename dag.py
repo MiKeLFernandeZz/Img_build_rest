@@ -164,7 +164,7 @@ def DAG_image_build_REST():
                 context=path,
                 destination=endpoint,
                 snapshot_mode=KanikoSnapshotMode.full,
-                verbosity=KanikoVerbosity.debug,
+                # verbosity=KanikoVerbosity.debug,
             )
 
     image_build_result = image_build_task()
