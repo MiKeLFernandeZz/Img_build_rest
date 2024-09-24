@@ -109,6 +109,7 @@ def DAG_image_build_REST():
         logging.warning(f"Python version: {python_version}")
         logging.warning(f"Endpoint: {endpoint}")
         logging.warning(f"User: {user}")
+        logging.warning(f"Password: {password[:2]}")
         logging.warning(f"Path: {path}")
 
         # requirement format --> 'package1==1.0.0 package2==2.0.0'
