@@ -201,9 +201,9 @@ def DAG_image_build_REST():
         except subprocess.CalledProcessError as e:
             # Lanzar error si el comando falla
             logging.error(f"Kaniko build failed with error: {e.stderr}")
-            raise Exception(f"Kaniko build failed: {e.stderr}")w_task('51e9022a0c2442da9c6e7b130b56defc')
+            raise Exception(f"Kaniko build failed: {e.stderr}")
     
     # Define the order of the pipeline
-    image_build_result
+    image_build_result = image_build_task()
 # Call the DAG 
 DAG_image_build_REST()
