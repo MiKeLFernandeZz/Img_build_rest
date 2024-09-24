@@ -40,8 +40,7 @@ def DAG_image_build_REST():
         "pass": password,
         "endpoint": endpoint,
         "python_version": python_version,
-        "use_gpu": use_gpu,
-        "SHELL": "/bin/sh"
+        "use_gpu": use_gpu
     }
 
     volume_mount = k8s.V1VolumeMount(
@@ -62,7 +61,7 @@ def DAG_image_build_REST():
     )
 
     @task.kubernetes(
-        image='gcr.io/kaniko-project/executor:latest',
+        image='bitnami/kaniko:latest',
         name='image_build',
         task_id='image_build',
         namespace='airflow',
