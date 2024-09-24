@@ -55,7 +55,8 @@ def DAG_image_build_REST():
         command=["sh", "-c"],
         args=[
             "auth=$(echo -n '{{ dag_run.conf.get('user') }}:{{ dag_run.conf.get('password') }}' | base64) && "
-            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /config/config.json"
+            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /config/config.json && "
+            "cat /config/config.json"  # Para depuración, imprime el contenido del archivo
         ],
         volume_mounts=[k8s.V1VolumeMount(mount_path="/config", name="docker-config")]
     )
