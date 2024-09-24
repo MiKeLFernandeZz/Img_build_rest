@@ -40,7 +40,8 @@ def DAG_image_build_REST():
         "pass": password,
         "endpoint": endpoint,
         "python_version": python_version,
-        "use_gpu": use_gpu
+        "use_gpu": use_gpu,
+        "SHELL": "/bin/sh"
     }
 
     volume_mount = k8s.V1VolumeMount(
