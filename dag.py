@@ -181,7 +181,7 @@ def DAG_image_build_REST():
 
         # Añadir autenticación si es necesario
         if user and password:
-            kaniko_command += f" --registry-mirror {docker_registry_uri} --registry-username={user} --registry-password={password}"
+            kaniko_command += f" --registry-username={user} --registry-password={password}"
 
         # logging.warning(f"Running Kaniko build with command: {kaniko_command}")
         os.system(f"sh -c '{kaniko_command}'")
