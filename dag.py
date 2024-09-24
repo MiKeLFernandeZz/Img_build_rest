@@ -156,6 +156,7 @@ def DAG_image_build_REST():
             kaniko.build(
                 dockerfile=f'{path}/Dockerfile',
                 context=path,
+                docker_registry_uri='https://index.docker.io/v1/',
                 destination=endpoint,
                 snapshot_mode=KanikoSnapshotMode.full,
                 registry_username=user,
