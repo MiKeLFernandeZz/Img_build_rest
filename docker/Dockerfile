@@ -11,4 +11,4 @@ WORKDIR /app
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --no-cache-dir pandas==1.3.3
 
-CMD ["python", "app.py"]
+# ENTRYPOINT ["python", "app.py"]
