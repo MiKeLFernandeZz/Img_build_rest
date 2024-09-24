@@ -3,6 +3,7 @@ from airflow.decorators import dag
 from kubernetes.client import models as k8s
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.models import Variable
+import base64
 
 @dag(
     description='Generate Docker image',
@@ -12,14 +13,19 @@ from airflow.models import Variable
     tags=['core', 'img_build'],
 )
 def DAG_image_build_REST():
-    
+
+    # Variables con las credenciales y configuración desde dag_run.conf
     user = "{{ dag_run.conf.get('user') }}"
     password = "{{ dag_run.conf.get('password') }}"
     endpoint = "{{ dag_run.conf.get('endpoint') }}"
     requirements = "{{ dag_run.conf.get('requirements') }}"
     python_version = "{{ dag_run.conf.get('python_version') }}"
     use_gpu = "{{ dag_run.conf.get('use_gpu') }}"
-
+    
+    # Codificación base64 de las credenciales
+    encoded_auth = "{{ (dag_run.conf.get('user') + ':' + dag_run.conf.get('password')).encode('utf-8') | b64encode }}"
+    
+    # Variables de entorno desde Airflow Variables y otras
     env_vars = {
         "POSTGRES_USERNAME": Variable.get("POSTGRES_USERNAME"),
         "POSTGRES_PASSWORD": Variable.get("POSTGRES_PASSWORD"),
@@ -46,14 +52,12 @@ def DAG_image_build_REST():
     # Define el volumen para compartir entre initContainer y el container principal
     volume = k8s.V1Volume(name="docker-config", empty_dir=k8s.V1EmptyDirVolumeSource())
 
-    # Init container para crear el archivo config.json
+    # Init container para crear el archivo config.json con las credenciales en base64
     init_container = k8s.V1Container(
         name="create-config",
         image="alpine:latest",
         command=["sh", "-c"],
-        args=[
-            f'echo \'{{"auths": {{"https://index.docker.io/v1/": {{"auth": "$(echo -n {user}:{password} | base64)"}}}}}}\' > /config/config.json'
-        ],
+        args=[f'echo \'{{"auths": {{"https://index.docker.io/v1/": {{"auth": "{encoded_auth}"}}}}}}\' > /config/config.json'],
         volume_mounts=[k8s.V1VolumeMount(mount_path="/config", name="docker-config")]
     )
 
@@ -76,6 +80,7 @@ def DAG_image_build_REST():
 
     path = '/git/Img_build_rest/docker'
 
+    # Definición de la tarea para construir la imagen
     image_build_task = KubernetesPodOperator(
         task_id='image_build',
         name='image_build',
@@ -94,5 +99,5 @@ def DAG_image_build_REST():
         ]
     )
 
-# Call the DAG 
+# Llamar al DAG
 DAG_image_build_REST()
