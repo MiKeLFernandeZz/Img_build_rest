@@ -61,7 +61,7 @@ def DAG_image_build_REST():
     )
 
     @task.kubernetes(
-        image='docker:19.03',
+        image='mfernandezlabastida/kaniko:1.0',
         name='image_build',
         task_id='image_build',
         namespace='airflow',
@@ -145,34 +145,31 @@ def DAG_image_build_REST():
         logging.warning("Building and pushing image")
         kaniko = Kaniko()
         # time.sleep(5)
-        # if(user and password):
-        #     logging.warning(f"Logging with user and password")
-        #     kaniko.build(
-        #         dockerfile=f'{path}/Dockerfile',
-        #         context=path,
-        #         docker_registry_uri='https://index.docker.io/v1/',
-        #         destination=endpoint,
-        #         snapshot_mode=KanikoSnapshotMode.full,
-        #         registry_username=user,
-        #         registry_password=password,
-        #         log_level='debug',
-        #     )
-        # else:
-        #     logging.warning(f"Logging without user and password")
-        #     kaniko.build(
-        #         dockerfile=f'{path}/Dockerfile',
-        #         context=path,
-        #         destination=endpoint,
-        #         snapshot_mode=KanikoSnapshotMode.full,
-        #         build_args={
-        #             'PYTHON_VERSION': python_version
-        #         },
-        #         insecure_pull=True,
-        #         # verbosity=KanikoVerbosity.debug,
-        #     )
-        os.system("docker login -u $DOCKER_USER -p $DOCKER_PASS")
-        os.system("docker build -t my-image:latest .")
-        # os.system("docker push my-image:latest")
+        if(user and password):
+            logging.warning(f"Logging with user and password")
+            kaniko.build(
+                dockerfile=f'{path}/Dockerfile',
+                context=path,
+                docker_registry_uri='https://index.docker.io/v1/',
+                destination=endpoint,
+                snapshot_mode=KanikoSnapshotMode.full,
+                registry_username=user,
+                registry_password=password,
+                log_level='debug',
+            )
+        else:
+            logging.warning(f"Logging without user and password")
+            kaniko.build(
+                dockerfile=f'{path}/Dockerfile',
+                context=path,
+                destination=endpoint,
+                snapshot_mode=KanikoSnapshotMode.full,
+                build_args={
+                    'PYTHON_VERSION': python_version
+                },
+                insecure_pull=True,
+                # verbosity=KanikoVerbosity.debug,
+            )
 
     image_build_result = image_build_task()
     # image_build_mlflow_result = image_build_mlflow_task('51e9022a0c2442da9c6e7b130b56defc')
