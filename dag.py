@@ -49,9 +49,11 @@ def DAG_image_build_REST():
     # Init container para crear el archivo config.json
     init_container = k8s.V1Container(
         name="create-config",
-        image="alpine:latest",  # Usar una imagen ligera
+        image="alpine:latest",
         command=["sh", "-c"],
-        args=[f"echo '{{\"auths\": {{\"https://index.docker.io/v1/\": {{\"auth\": \"$(echo -n {user}:{password} | base64)\"}}}}}}' > /config/config.json"],
+        args=[
+            f'echo \'{{"auths": {{"https://index.docker.io/v1/": {{"auth": "$(echo -n {user}:{password} | base64)"}}}}}}}\' > /config/config.json'
+        ],
         volume_mounts=[k8s.V1VolumeMount(mount_path="/config", name="docker-config")]
     )
 
@@ -66,7 +68,7 @@ def DAG_image_build_REST():
     # Montaje del volumen en el pod de Kaniko
     volume_mount = k8s.V1VolumeMount(
         name="docker-config",
-        mount_path="/kaniko/.docker/"  # Este es el path que Kaniko espera para config.json
+        mount_path="/kaniko/.docker/"
     )
 
     # Crear el volumen para las dependencias de git
