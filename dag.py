@@ -3,7 +3,6 @@ from airflow.decorators import dag
 from kubernetes.client import models as k8s
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.models import Variable
-import base64
 
 @dag(
     description='Generate Docker image',
@@ -21,10 +20,7 @@ def DAG_image_build_REST():
     requirements = "{{ dag_run.conf.get('requirements') }}"
     python_version = "{{ dag_run.conf.get('python_version') }}"
     use_gpu = "{{ dag_run.conf.get('use_gpu') }}"
-    
-    # Codificación base64 de las credenciales
-    encoded_auth = "{{ (dag_run.conf.get('user') + ':' + dag_run.conf.get('password')).encode('utf-8') | b64encode }}"
-    
+
     # Variables de entorno desde Airflow Variables y otras
     env_vars = {
         "POSTGRES_USERNAME": Variable.get("POSTGRES_USERNAME"),
@@ -57,7 +53,10 @@ def DAG_image_build_REST():
         name="create-config",
         image="alpine:latest",
         command=["sh", "-c"],
-        args=[f'echo \'{{"auths": {{"https://index.docker.io/v1/": {{"auth": "{encoded_auth}"}}}}}}\' > /config/config.json'],
+        args=[
+            "auth=$(echo -n '{{ dag_run.conf.get('user') }}:{{ dag_run.conf.get('password') }}' | base64) && "
+            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /config/config.json"
+        ],
         volume_mounts=[k8s.V1VolumeMount(mount_path="/config", name="docker-config")]
     )
 
