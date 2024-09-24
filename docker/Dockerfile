@@ -7,8 +7,8 @@ WORKDIR /app
 
 # Crear un archivo temporal para las dependencias
 # COPY requirements.txt .
+COPY ./requirements.txt /app/requirements.txt
 
 # Instala las dependencias especificadas en el archivo temporal
-RUN pip install --no-cache-dir pandas==1.3.3
-
+RUN pip install --no-cache-dir -r requirements.txt
 # ENTRYPOINT ["python", "app.py"]
