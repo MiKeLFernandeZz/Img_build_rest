@@ -106,6 +106,8 @@ def DAG_image_build_REST():
         # requirements = ' '.join(requirements_list)
 
         logging.warning(f"Requirements: {requirements}")
+        logging.warning(f"Python version: {python_version}")
+        logging.warning(f"Endpoint: {endpoint}")
         logging.warning(f"User: {user}")
         logging.warning(f"Path: {path}")
 
@@ -167,7 +169,8 @@ def DAG_image_build_REST():
                 snapshot_mode=KanikoSnapshotMode.full,
                 build_args={
                     'PYTHON_VERSION': python_version
-                }
+                },
+                insecure_pull=True,
                 # verbosity=KanikoVerbosity.debug,
             )
 
