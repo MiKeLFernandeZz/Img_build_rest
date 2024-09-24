@@ -1,7 +1,7 @@
 from datetime import datetime
 from airflow.decorators import dag, task
 from kubernetes.client import models as k8s
-from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.models import Variable
 
 @dag(
@@ -61,149 +61,6 @@ def DAG_image_build_REST():
         volume_mounts=init_container_volume_mounts
     )
 
-    # @task.kubernetes(
-    #     image='mfernandezlabastida/kaniko:1.0',
-    #     name='image_build',
-    #     task_id='image_build',
-    #     namespace='airflow',
-    #     init_containers=[init_container],
-    #     volumes=[volume],
-    #     volume_mounts=[volume_mount],
-    #     env_vars=env_vars
-    # )
-    # def image_build_task():
-    #     import logging
-    #     import os
-    #     # from kaniko import Kaniko, KanikoSnapshotMode, KanikoVerbosity
-    #     import time
-    #     import subprocess
-
-
-    #     user = os.getenv('user')
-    #     password = os.getenv('pass')
-    #     endpoint = os.getenv("endpoint") # 'registry-docker-registry.registry.svc.cluster.local:5001/mfernandezlabastida/engine:1.0'
-    #     requirements = os.getenv("requirements")
-    #     python_version = os.getenv("python_version")
-    #     use_gpu = os.getenv("use_gpu")
-    #     required_packages = ['mlflow', 'redis', 'psycopg2-binary']
-    #     docker_registry_uri = 'https://index.docker.io/v1/'
-
-    #     path = '/git/Img_build_rest/docker'
-
-    #     # Verificar si se debe usar GPU
-    #     if use_gpu == 'true':
-    #         logging.warning("Using GPU")
-    #         path = '/git/Img_build_rest/docker_gpus'
-
-    #     # Verificar si las dependencias se encuentran en el requirements.txt
-    #     # requirements_list = requirements.split()
-    #     # for package in required_packages:
-    #     #     if package not in requirements_list:
-    #     #         requirements_list.append(package)
-
-    #     # requirements = ' '.join(requirements_list)
-
-    #     logging.warning(f"Requirements: {requirements}")
-    #     logging.warning(f"Python version: {python_version}")
-    #     logging.warning(f"Endpoint: {endpoint}")
-    #     logging.warning(f"User: {user}")
-    #     logging.warning(f"Path: {path}")
-
-    #     # requirement format --> 'package1==1.0.0 package2==2.0.0'
-    #     # packages = requirements.split()
-
-    #     # with open(f'{path}/requirements.txt', 'w') as f:
-    #     #     for package in packages:
-    #     #         f.write(package + '\n')
-
-    #     # Sustituir la versión de Python en el Dockerfile
-    #     # with open(f'{path}/Dockerfile', 'r', encoding='utf-8') as file:
-    #     #     content = file.read()
-
-    #     # content = content.replace('{{PYTHON_VERSION}}', python_version)
-    #     # content = content.replace('{{REQUIREMENTS}}', requirements)
-
-    #     # with open(f'{path}/Dockerfile', 'w', encoding='utf-8') as file:
-    #     #     file.write(content)
-
-    #     # Modificar la version de Python del Dockerfile
-    #     # if python_version:
-    #     #     with open(f'{path}/Dockerfile', 'r') as archivo:
-    #     #         lineas = archivo.readlines()
-
-    #     #     # Modificar la línea que contiene el FROM
-    #     #     with open(f'{path}/Dockerfile', 'w') as archivo:
-    #     #         for linea in lineas:
-    #     #             if linea.startswith('FROM python:'):
-    #     #                 # Reemplazar la versión de Python
-    #     #                 archivo.write(f'FROM python:{python_version}\n')
-    #     #             if linea.startswith('RUN pip install --no-cache-dir -r'):
-    #     #                 # Reemplazar la versión de Python
-    #     #                 archivo.write(f'RUN pip install --no-cache-dir {requirements}\n')
-    #     #             else:
-    #     #                 archivo.write(linea)
-
-
-    #     # Construir y subir la imagen
-    #     # logging.warning("Building and pushing image")
-    #     # kaniko = Kaniko()
-    #     # time.sleep(5)
-    #     # if(user and password):
-    #     #     logging.warning(f"Logging with user and password")
-    #     #     kaniko.build(
-    #     #         dockerfile=f'{path}/Dockerfile',
-    #     #         context=path,
-    #     #         docker_registry_uri='https://index.docker.io/v1/',
-    #     #         destination=endpoint,
-    #     #         snapshot_mode=KanikoSnapshotMode.full,
-    #     #         registry_username=user,
-    #     #         registry_password=password,
-    #     #         log_level='debug',
-    #     #     )
-    #     # else:
-    #     #     logging.warning(f"Logging without user and password")
-    #     #     kaniko.build(
-    #     #         dockerfile=f'{path}/Dockerfile',
-    #     #         context=path,
-    #     #         destination=endpoint,
-    #     #         snapshot_mode=KanikoSnapshotMode.full,
-    #     #         build_args={
-    #     #             'PYTHON_VERSION': python_version
-    #     #         },
-    #     #         insecure_pull=True,
-    #     #         # verbosity=KanikoVerbosity.debug,
-    #     #     )
-    #     # os.system("docker login -u $DOCKER_USER -p $DOCKER_PASS")
-    #     # os.system("docker build -t my-image:latest .")
-    #     # os.system("docker push my-image:latest")
-
-    #     kaniko_command = [
-    #             "/kaniko/executor",
-    #             f"--dockerfile={path}/Dockerfile",
-    #             f"--context={path}",
-    #             f"--destination={endpoint}",
-    #             "--insecure",
-    #             "--skip-tls-verify",
-    #             "--force",
-    #             "--verbosity=debug"
-    #         ]
-
-    #     # Añadir autenticación si es necesario
-    #     if user and password:
-    #         kaniko_command.extend([f" --docker_registry_uri=https://index.docker.io/v1/ --registry-username={user}", f"--registry-password={password}"])
-
-    #     try:
-    #         logging.warning(f"Running Kaniko build with command: {' '.join(kaniko_command)}")
-            
-    #         # Ejecutar el comando y capturar errores
-    #         result = subprocess.run(kaniko_command, check=True, capture_output=True, text=True)
-    #         logging.warning(f"Kaniko build output: {result.stdout}")
-    #         logging.error(f"Kaniko build error output: {result.stderr}")
-    #     except subprocess.CalledProcessError as e:
-    #         # Lanzar error si el comando falla
-    #         logging.error(f"Kaniko build failed with error: {e.stderr}")
-    #         raise Exception(f"Kaniko build failed: {e.stderr}")
-
     path = '/git/Img_build_rest/docker'
 
     image_build_task = KubernetesPodOperator(
@@ -225,10 +82,6 @@ def DAG_image_build_REST():
             f"--build-arg=DOCKER_PASSWORD={password}"
         ]
     )
-    
-    image_build_result = image_build_task()
 
-    # Define the order of the pipeline
-    image_build_result
 # Call the DAG 
 DAG_image_build_REST()
