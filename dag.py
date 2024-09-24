@@ -73,7 +73,7 @@ def DAG_image_build_REST():
     def image_build_task():
         import logging
         import os
-        from kaniko import Kaniko, KanikoSnapshotMode, KanikoVerbosity
+        # from kaniko import Kaniko, KanikoSnapshotMode, KanikoVerbosity
         import time
 
         user = os.getenv('user')
