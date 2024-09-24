@@ -104,7 +104,6 @@ def DAG_image_build_REST():
         logging.warning(f"Python version: {python_version}")
         logging.warning(f"Endpoint: {endpoint}")
         logging.warning(f"User: {user}")
-        logging.warning(f"Password: {password[:2]}")
         logging.warning(f"Path: {path}")
 
         # requirement format --> 'package1==1.0.0 package2==2.0.0'
@@ -178,23 +177,23 @@ def DAG_image_build_REST():
         client = docker.from_env()
         try:
             # Build the Docker image
-            print(f"Building Docker image {endpoint}...")
+            logging.warning(f"Building Docker image {endpoint}...")
             image, logs = client.images.build(path=f'{path}/Dockerfile', tag=endpoint)
             for log in logs:
                 print(log)
             
             # Authenticate to Docker registry
-            print(f"Logging in to Docker registry {endpoint}...")
+            logging.warning(f"Logging in to Docker registry {endpoint}...")
             client.login(username=user, password=password, registry=endpoint)
 
             # Push the Docker image
-            print(f"Pushing Docker image {endpoint} to {endpoint}...")
+            logging.warning(f"Pushing Docker image {endpoint} to {endpoint}...")
             response = client.images.push(repository=endpoint)
-            print(response)
+            logging.warning(response)
 
-            print(f"Image {endpoint} pushed successfully.")
+            logging.warning(f"Image {endpoint} pushed successfully.")
         except docker.errors.DockerException as e:
-            print(f"Error during Docker operation: {e}")
+            logging.warning(f"Error during Docker operation: {e}")
         finally:
             client.close()
 
