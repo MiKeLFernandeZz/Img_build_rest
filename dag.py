@@ -1,4 +1,5 @@
 from datetime import datetime
+import subprocess
 from airflow.decorators import dag, task
 from kubernetes.client import models as k8s
 from airflow.models import Variable
@@ -175,19 +176,32 @@ def DAG_image_build_REST():
         # os.system("docker build -t my-image:latest .")
         # os.system("docker push my-image:latest")
 
-        kaniko_command = f"""
-        /kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --insecure --skip-tls-verify --force --verbosity=debug
-        """
+        kaniko_command = [
+                "/kaniko/executor",
+                f"--dockerfile={path}/Dockerfile",
+                f"--context={path}",
+                f"--destination={endpoint}",
+                "--insecure",
+                "--skip-tls-verify",
+                "--force",
+                "--verbosity=debug"
+            ]
 
         # Añadir autenticación si es necesario
         if user and password:
-            kaniko_command += f" --registry-username={user} --registry-password={password}"
+            kaniko_command.extend([f" --docker_registry_uri=https://index.docker.io/v1/ --registry-username={user}", f"--registry-password={password}"])
 
-        # logging.warning(f"Running Kaniko build with command: {kaniko_command}")
-        os.system(f"sh -c '{kaniko_command}'")
-
-    image_build_result = image_build_task()
-    # image_build_mlflow_result = image_build_mlflow_task('51e9022a0c2442da9c6e7b130b56defc')
+        try:
+            logging.warning(f"Running Kaniko build with command: {' '.join(kaniko_command)}")
+            
+            # Ejecutar el comando y capturar errores
+            result = subprocess.run(kaniko_command, check=True, capture_output=True, text=True)
+            logging.warning(f"Kaniko build output: {result.stdout}")
+            logging.error(f"Kaniko build error output: {result.stderr}")
+        except subprocess.CalledProcessError as e:
+            # Lanzar error si el comando falla
+            logging.error(f"Kaniko build failed with error: {e.stderr}")
+            raise Exception(f"Kaniko build failed: {e.stderr}")w_task('51e9022a0c2442da9c6e7b130b56defc')
     
     # Define the order of the pipeline
     image_build_result
