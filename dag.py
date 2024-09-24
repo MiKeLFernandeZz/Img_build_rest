@@ -55,7 +55,8 @@ def DAG_image_build_REST():
         command=["sh", "-c"],
         args=[
             "mkdir -p /kaniko/.docker && "
-            "echo '{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}' > /kaniko/.docker/config.json"
+            "auth=$(echo -n '{{ dag_run.conf.get('user') }}:{{ dag_run.conf.get('password') }}' | base64) && "
+            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /config/config.json && "
         ],
         volume_mounts=[k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")]
     )
