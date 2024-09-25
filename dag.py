@@ -39,7 +39,7 @@ def DAG_image_build_REST():
         "container": "docker",
         "requirements": requirements,
         "user": user,
-        "pass": password,
+        "password": password,
         "endpoint": endpoint,
         "python_version": python_version,
         "use_gpu": use_gpu
@@ -59,8 +59,8 @@ def DAG_image_build_REST():
         ],
         args=[
             "mkdir -p /kaniko/.docker && "
-            "echo -n $user:$pass && "
-            "auth=$(echo -n \"${user}:${pass}\" | base64) && "
+            f"echo -n ${user}:${password} && "
+            f"auth=$(echo -n \"${user}:${password}\" | base64) && "
             "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
             "cat /kaniko/.docker/config.json"
         ],
