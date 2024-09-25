@@ -179,14 +179,6 @@ def DAG_image_build_REST():
         logging.warning(f"Path: {path}")
         logging.warning(f"Endpoint: {endpoint}")
         logging.warning(f"Python version: {python_version}")
-        # kaniko = Kaniko(
-        #     dockerfile=os.path.join(path, "Dockerfile"),
-        #     context=path,
-        #     destination=endpoint,
-        #     build_args={"PYTHON_VERSION": python_version},
-        #     verbosity=KanikoVerbosity.NORMAL
-        # )
-        # kaniko.execute()
 
         result = subprocess.run(
             [

@@ -1,6 +1,12 @@
+# Especifica la versión de Python como build-arg
+ARG PYTHON_VERSION="3.8.10"
+
 FROM nvidia/cuda:11.4.3-base-ubuntu20.04
 
-# Instala las dependencias para compilar Python
+# Asegúrate de que el argumento se mantenga disponible en el build
+ARG PYTHON_VERSION
+
+# Instala las dependencias necesarias para compilar Python
 RUN apt-get update && apt-get install -y \
     wget \
     build-essential \
@@ -13,23 +19,26 @@ RUN apt-get update && apt-get install -y \
     libbz2-dev \
     liblzma-dev
 
-# Descarga y compila Python 3.8.10 (o la versión que desees)
-RUN wget https://www.python.org/ftp/python/{{PYTHON_VERSION}}/Python-{{PYTHON_VERSION}}.tgz && \
-    tar xzf Python-{{PYTHON_VERSION}}.tgz && \
-    cd Python-{{PYTHON_VERSION}} && \
+# Descarga, compila e instala la versión de Python especificada
+RUN wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
+    tar xzf Python-${PYTHON_VERSION}.tgz && \
+    cd Python-${PYTHON_VERSION} && \
     ./configure --enable-optimizations && \
     make -j$(nproc) && \
     make altinstall
 
-# Crea un alias para python3.8
-RUN ln -s /usr/local/bin/python3.8 /usr/bin/python3 && \
-    ln -s /usr/local/bin/pip3.8 /usr/bin/pip
+# Crea un alias para el binario de Python y pip, utilizando la versión especificada
+RUN ln -s /usr/local/bin/python${PYTHON_VERSION%%.*} /usr/bin/python3 && \
+    ln -s /usr/local/bin/pip${PYTHON_VERSION%%.*} /usr/bin/pip
 
-# Instala las dependencias de tu aplicación
-RUN pip install --no-cache-dir {{REQUIREMENTS}}
+# Copia el archivo de dependencias al contenedor
+COPY requirements.txt .
+
+# Instala las dependencias de la aplicación
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Limpia los archivos de instalación
-RUN rm -rf /Python-{{PYTHON_VERSION}}*
+RUN rm -rf /Python-${PYTHON_VERSION}*
 
-# Configura el alias para que el comando 'python' apunte a 'python3'
+# Configura un alias para que el comando 'python' apunte a 'python3'
 RUN ln -s /usr/bin/python3 /usr/bin/python
