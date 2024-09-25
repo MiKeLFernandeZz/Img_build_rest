@@ -146,6 +146,7 @@ def DAG_image_build_REST():
         path = '/git/Img_build_rest/docker'
 
         # Verificar si se va a usar GPU
+        logging.warning(f"Use GPU: {use_gpu}")
         if use_gpu == 'true':
             logging.warning("Using GPU")
             path = '/git/Img_build_rest/docker_gpus'
