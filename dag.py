@@ -47,48 +47,26 @@ def DAG_image_build_REST():
         "use_gpu": use_gpu
     }
 
-    # Define el volumen para compartir entre initContainer y el container principal
-    volume = k8s.V1Volume(name="docker-config", empty_dir=k8s.V1EmptyDirVolumeSource())
+    # credentials_volume_mount = k8s.V1VolumeMount(
+    #     name="docker-config", mount_path="/kaniko/.docker"
+    # )
 
-    # Init container para crear el archivo config.json con las credenciales en base64
-    # init_container = k8s.V1Container(
+    # credentials_container_volume_mounts = [
+    #     k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")
+    # ]
+
+    # credentials_volume = k8s.V1Volume(name="docker-config", empty_dir=k8s.V1EmptyDirVolumeSource())
+
+    # credentials_container = k8s.V1Container(
     #     name="create-config",
     #     image="alpine:latest",
     #     command=["sh", "-c"],
-    #     env=[
-    #         k8s.V1EnvVar(name="user", value=user),
-    #         k8s.V1EnvVar(name="pass", value=password)
-    #     ],
     #     args=[
     #         "mkdir -p /kaniko/.docker && "
-    #         f"echo -n ${user}:${password} && "
-    #         f"auth=$(echo -n \"${user}:${password}\" | base64) && "
-    #         "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
-    #         "cat /kaniko/.docker/config.json"
+    #         f"echo -n ${user}:${password}"
     #     ],
-    #     volume_mounts=[k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")]
+    #     volume_mounts=credentials_container_volume_mounts
     # )
-
-    credentials_volume_mount = k8s.V1VolumeMount(
-        name="docker-config", mount_path="/kaniko/.docker"
-    )
-
-    credentials_container_volume_mounts = [
-        k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")
-    ]
-
-    credentials_volume = k8s.V1Volume(name="docker-config", empty_dir=k8s.V1EmptyDirVolumeSource())
-
-    credentials_container = k8s.V1Container(
-        name="create-config",
-        image="alpine:latest",
-        command=["sh", "-c"],
-        args=[
-            "mkdir -p /kaniko/.docker && "
-            f"echo -n ${user}:${password}"
-        ],
-        volume_mounts=credentials_container_volume_mounts
-    )
 
     volume_mount = k8s.V1VolumeMount(
         name="dag-dependencies", mount_path="/git"
@@ -117,11 +95,11 @@ def DAG_image_build_REST():
         task_id='image_build',
         name='image_build',
         namespace='airflow',
-        image='gcr.io/kaniko-project/executor:latest',
+        image='bitnami/kaniko',
         env_vars=env_vars,
-        init_containers=[init_container, credentials_container],  # Añadir ambos init containers
-        volumes=[volume, credentials_volume],
-        volume_mounts=[volume_mount, credentials_volume_mount],
+        init_containers=[init_container],  # Añadir ambos init containers
+        volumes=[volume],
+        volume_mounts=[volume_mount],
         # cmds=["/kaniko/executor"],
         # arguments=[
         #     f"--dockerfile={path}/Dockerfile",
@@ -129,7 +107,7 @@ def DAG_image_build_REST():
         #     f"--destination={endpoint}",
         #     f"--build-arg=PYTHON_VERSION={python_version}"
         # ]
-        cmds=["/busybox/sh", "-c"],
+        cmds=["sh", "-c"],
         arguments=[
             f"echo -n ${user}:${password} && "
             f"auth=$(echo -n \"${user}:${password}\" | base64) && "
