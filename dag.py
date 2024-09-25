@@ -95,7 +95,7 @@ def DAG_image_build_REST():
         task_id='image_build',
         name='image_build',
         namespace='airflow',
-        image='bitnami/kaniko',
+        image='mfernandezlabastida/kaniko:1.0',
         env_vars=env_vars,
         init_containers=[init_container],  # Añadir ambos init containers
         volumes=[volume],
