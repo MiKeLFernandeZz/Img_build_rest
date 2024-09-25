@@ -190,6 +190,7 @@ def DAG_image_build_REST():
         logging.warning(f"Path: {path}")
         logging.warning(f"Endpoint: {endpoint}")
         logging.warning(f"Python version: {python_version}")
+        logging.warning(f"Requirements: {requirements}")
 
         result = subprocess.run(
             [
