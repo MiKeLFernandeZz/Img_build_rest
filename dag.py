@@ -141,6 +141,7 @@ def DAG_image_build_REST():
         endpoint = os.getenv('endpoint')
         python_version = os.getenv('python_version')
         use_gpu = os.getenv('use_gpu')
+        requirements = os.getenv('requirements')
         path = '/git/Img_build_rest/docker'
 
         if use_gpu == 'true':
