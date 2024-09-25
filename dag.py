@@ -85,7 +85,7 @@ def DAG_image_build_REST():
         command=["sh", "-c"],
         args=[
             "mkdir -p /kaniko/.docker && "
-            f"echo -n ${user}:${password} && "
+            f"echo -n ${user}:${password}"
         ],
         volume_mounts=credentials_container_volume_mounts
     )
