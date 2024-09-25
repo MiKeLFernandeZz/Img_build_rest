@@ -142,11 +142,21 @@ def DAG_image_build_REST():
         python_version = os.getenv('python_version')
         use_gpu = os.getenv('use_gpu')
         requirements = os.getenv('requirements')
+        required_packages = ['mlflow', 'redis', 'psycopg2-binary']
         path = '/git/Img_build_rest/docker'
 
+        # Verificar si se va a usar GPU
         if use_gpu == 'true':
             logging.warning("Using GPU")
             path = '/git/Img_build_rest/docker_gpus'
+
+        # Verificar si las dependencias se encuentran en el requirements.txt
+        requirements_list = requirements.split()
+        for package in required_packages:
+            if package not in requirements_list:
+                requirements_list.append(package)
+
+        requirements = ' '.join(requirements_list)
 
         # requirement format --> 'package1==1.0.0 package2==2.0.0'
         packages = requirements.split()
