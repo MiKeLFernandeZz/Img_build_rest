@@ -49,23 +49,23 @@ def DAG_image_build_REST():
     volume = k8s.V1Volume(name="docker-config", empty_dir=k8s.V1EmptyDirVolumeSource())
 
     # Init container para crear el archivo config.json con las credenciales en base64
-    init_container = k8s.V1Container(
-        name="create-config",
-        image="alpine:latest",
-        command=["sh", "-c"],
-        env=[
-            k8s.V1EnvVar(name="user", value=user),
-            k8s.V1EnvVar(name="pass", value=password)
-        ],
-        args=[
-            "mkdir -p /kaniko/.docker && "
-            f"echo -n ${user}:${password} && "
-            f"auth=$(echo -n \"${user}:${password}\" | base64) && "
-            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
-            "cat /kaniko/.docker/config.json"
-        ],
-        volume_mounts=[k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")]
-    )
+    # init_container = k8s.V1Container(
+    #     name="create-config",
+    #     image="alpine:latest",
+    #     command=["sh", "-c"],
+    #     env=[
+    #         k8s.V1EnvVar(name="user", value=user),
+    #         k8s.V1EnvVar(name="pass", value=password)
+    #     ],
+    #     args=[
+    #         "mkdir -p /kaniko/.docker && "
+    #         f"echo -n ${user}:${password} && "
+    #         f"auth=$(echo -n \"${user}:${password}\" | base64) && "
+    #         "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
+    #         "cat /kaniko/.docker/config.json"
+    #     ],
+    #     volume_mounts=[k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")]
+    # )
 
     # Contenedor para clonar el repositorio
     git_clone_container = k8s.V1Container(
@@ -82,7 +82,7 @@ def DAG_image_build_REST():
     )
 
     # Crear el volumen para las dependencias de git
-    dag_dependencies_volume = k8s.V1Volume(name="dag-dependencies", empty_dir=k8s.V1EmptyDirVolumeSource())
+    # dag_dependencies_volume = k8s.V1Volume(name="dag-dependencies", empty_dir=k8s.V1EmptyDirVolumeSource())
 
     path = '/git/Img_build_rest/docker'
 
@@ -95,7 +95,7 @@ def DAG_image_build_REST():
         env_vars=env_vars,
         init_containers=[git_clone_container],  # Añadir ambos init containers
         volumes=[volume],
-        volume_mounts=[volume_mount, k8s.V1VolumeMount(mount_path="/git", name="dag-dependencies")],
+        volume_mounts=[volume_mount],
         # cmds=["/kaniko/executor"],
         # arguments=[
         #     f"--dockerfile={path}/Dockerfile",
