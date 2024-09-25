@@ -67,18 +67,22 @@ def DAG_image_build_REST():
     #     volume_mounts=[k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")]
     # )
 
+    volume_mount = k8s.V1VolumeMount(
+        name="dag-dependencies", mount_path="/git"
+    )
+
     # Contenedor para clonar el repositorio
-    git_clone_container = k8s.V1Container(
+    init_container_volume_mounts = [
+        k8s.V1VolumeMount(mount_path="/git", name="dag-dependencies")
+    ]
+
+    volume = k8s.V1Volume(name="dag-dependencies", empty_dir=k8s.V1EmptyDirVolumeSource())
+
+    init_container = k8s.V1Container(
         name="git-clone",
         image="alpine/git:latest",
         command=["sh", "-c", "mkdir -p /git && cd /git && git clone -b main --single-branch https://github.com/MiKeLFernandeZz/Img_build_rest.git"],
-        volume_mounts=[k8s.V1VolumeMount(mount_path="/git", name="dag-dependencies")]
-    )
-
-    # Montaje del volumen en el pod de Kaniko
-    volume_mount = k8s.V1VolumeMount(
-        name="docker-config",
-        mount_path="/kaniko/.docker/"
+        volume_mounts=init_container_volume_mounts
     )
 
     # Crear el volumen para las dependencias de git
@@ -93,7 +97,7 @@ def DAG_image_build_REST():
         namespace='airflow',
         image='gcr.io/kaniko-project/executor:latest',
         env_vars=env_vars,
-        init_containers=[git_clone_container],  # Añadir ambos init containers
+        init_containers=[init_container],  # Añadir ambos init containers
         volumes=[volume],
         volume_mounts=[volume_mount],
         # cmds=["/kaniko/executor"],
