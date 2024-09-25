@@ -107,7 +107,7 @@ def DAG_image_build_REST():
         #     f"--destination={endpoint}",
         #     f"--build-arg=PYTHON_VERSION={python_version}"
         # ]
-        cmds=["sh", "-c"],
+        cmds=["/busybox/sh", "-c"],
         arguments=[
             f"echo -n ${user}:${password} && "
             f"auth=$(echo -n \"${user}:${password}\" | base64) && "
