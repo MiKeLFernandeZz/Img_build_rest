@@ -177,5 +177,7 @@ def DAG_image_build_REST():
 
         logging.info("Image build completed successfully")
 
+    image_build_task()
+
 # Llamar al DAG
 DAG_image_build_REST()
