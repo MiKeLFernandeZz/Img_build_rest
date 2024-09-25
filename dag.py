@@ -93,15 +93,22 @@ def DAG_image_build_REST():
         namespace='airflow',
         image='gcr.io/kaniko-project/executor:latest',
         env_vars=env_vars,
-        init_containers=[init_container, git_clone_container],  # Añadir ambos init containers
-        volumes=[volume, dag_dependencies_volume],
+        init_containers=[git_clone_container],  # Añadir ambos init containers
+        volumes=[volume],
         volume_mounts=[volume_mount, k8s.V1VolumeMount(mount_path="/git", name="dag-dependencies")],
-        cmds=["/kaniko/executor"],
+        # cmds=["/kaniko/executor"],
+        # arguments=[
+        #     f"--dockerfile={path}/Dockerfile",
+        #     f"--context={path}",
+        #     f"--destination={endpoint}",
+        #     f"--build-arg=PYTHON_VERSION={python_version}"
+        # ]
+        cmds=["sh", "-c"],
         arguments=[
-            f"--dockerfile={path}/Dockerfile",
-            f"--context={path}",
-            f"--destination={endpoint}",
-            f"--build-arg=PYTHON_VERSION={python_version}"
+            f"echo -n ${user}:${password} && "
+            f"auth=$(echo -n \"${user}:${password}\" | base64) && "
+            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
+            f"/kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --build-arg=PYTHON_VERSION={python_version}"
         ]
     )
 
