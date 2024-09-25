@@ -22,8 +22,6 @@ def DAG_image_build_REST():
     python_version = "{{ dag_run.conf.get('python_version') }}"
     use_gpu = "{{ dag_run.conf.get('use_gpu') }}"
 
-    path = '/git/Img_build_rest/docker'
-
     # Variables de entorno desde Airflow Variables y otras
     env_vars = {
         "POSTGRES_USERNAME": Variable.get("POSTGRES_USERNAME"),
@@ -45,8 +43,7 @@ def DAG_image_build_REST():
         "password": password,
         "endpoint": endpoint,
         "python_version": python_version,
-        "use_gpu": use_gpu,
-        "path": path
+        "use_gpu": use_gpu
     }
 
     # credentials_volume_mount = k8s.V1VolumeMount(
@@ -141,9 +138,20 @@ def DAG_image_build_REST():
         # Obtener las credenciales de las variables de entorno
         user = os.getenv('user')
         password = os.getenv('password')
-        path = os.getenv('path')
         endpoint = os.getenv('endpoint')
         python_version = os.getenv('python_version')
+        path = '/git/Img_build_rest/docker'
+
+        if use_gpu == 'true':
+            logging.warning("Using GPU")
+            path = '/git/Img_build_rest/docker_gpus'
+
+        # requirement format --> 'package1==1.0.0 package2==2.0.0'
+        packages = requirements.split()
+
+        with open(f'{path}/requirements.txt', 'w') as f:
+            for package in packages:
+                f.write(package + '\n')
 
         # Autenticación para Docker
         logging.warning(f"Authenticating user {user}")

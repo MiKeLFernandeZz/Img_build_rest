@@ -1,6 +1,6 @@
+ARG PYTHON_VERSION="3.9.17"
 
-
-FROM python:3.9.17
+FROM python:${PYTHON_VERSION}
 # FROM registry-docker-registry.registry.svc.cluster.local:5001/python:3.9.17
 # Establece el directorio de trabajo en /app
 WORKDIR /app 
