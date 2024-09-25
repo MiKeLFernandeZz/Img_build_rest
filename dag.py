@@ -132,6 +132,7 @@ def DAG_image_build_REST():
         import os
         import base64
         import json
+        import subprocess
 
         # Configurar logging
         logging.info("Starting image build task")
@@ -144,7 +145,7 @@ def DAG_image_build_REST():
         python_version = os.getenv('python_version')
 
         # Autenticación para Docker
-        logging.info(f"Authenticating user {user}")
+        logging.warning(f"Authenticating user {user}")
         auth = f"{user}:{password}".encode('utf-8')
         auth_encoded = base64.b64encode(auth).decode('utf-8')
 
@@ -163,7 +164,10 @@ def DAG_image_build_REST():
             json.dump(docker_config, config_file)
 
         # Ejecutar Kaniko
-        logging.info("Running Kaniko executor")
+        logging.warning("Running Kaniko executor")
+        logging.warning(f"Path: {path}")
+        logging.warning(f"Endpoint: {endpoint}")
+        logging.warning(f"Python version: {python_version}")
         # kaniko = Kaniko(
         #     dockerfile=os.path.join(path, "Dockerfile"),
         #     context=path,
@@ -173,9 +177,18 @@ def DAG_image_build_REST():
         # )
         # kaniko.execute()
 
-        os.system(f"/kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --build-arg=PYTHON_VERSION={python_version}")
+        result = subprocess.run(
+            [
+                "/kaniko/executor",
+                f"--dockerfile={path}/Dockerfile",
+                f"--context={path}",
+                f"--destination={endpoint}",
+                f"--build-arg=PYTHON_VERSION={python_version}"
+            ],
+            check=True  # Lanza una excepción si el comando devuelve un código diferente de cero
+        )
 
-        logging.info("Image build completed successfully")
+        logging.warning(f"Kaniko executor finished with return code: {result.returncode}")
 
     image_build_task()
 
