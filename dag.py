@@ -2,6 +2,7 @@ from datetime import datetime
 from airflow.decorators import dag
 from kubernetes.client import models as k8s
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow.decorators import dag, task
 from airflow.models import Variable
 
 @dag(
@@ -91,30 +92,90 @@ def DAG_image_build_REST():
 
 
     # Definición de la tarea para construir la imagen
-    image_build_task = KubernetesPodOperator(
-        task_id='image_build',
-        name='image_build',
-        namespace='airflow',
+    # image_build_task = KubernetesPodOperator(
+    #     task_id='image_build',
+    #     name='image_build',
+    #     namespace='airflow',
+    #     image='mfernandezlabastida/kaniko:1.0',
+    #     env_vars=env_vars,
+    #     init_containers=[init_container],  # Añadir ambos init containers
+    #     volumes=[volume],
+    #     volume_mounts=[volume_mount],
+    #     # cmds=["/kaniko/executor"],
+    #     # arguments=[
+    #     #     f"--dockerfile={path}/Dockerfile",
+    #     #     f"--context={path}",
+    #     #     f"--destination={endpoint}",
+    #     #     f"--build-arg=PYTHON_VERSION={python_version}"
+    #     # ]
+    #     cmds=["sh", "-c"],
+    #     arguments=[
+    #         f"echo -n ${user}:${password} && "
+    #         f"auth=$(echo -n \"${user}:${password}\" | base64) && "
+    #         "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
+    #         f"/kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --build-arg=PYTHON_VERSION={python_version}"
+    #     ]
+    # )
+
+    @task.kubernetes(
         image='mfernandezlabastida/kaniko:1.0',
-        env_vars=env_vars,
-        init_containers=[init_container],  # Añadir ambos init containers
+        name='image_build',
+        task_id='image_build',
+        namespace='airflow',
+        init_containers=[init_container],
         volumes=[volume],
         volume_mounts=[volume_mount],
-        # cmds=["/kaniko/executor"],
-        # arguments=[
-        #     f"--dockerfile={path}/Dockerfile",
-        #     f"--context={path}",
-        #     f"--destination={endpoint}",
-        #     f"--build-arg=PYTHON_VERSION={python_version}"
-        # ]
-        cmds=["sh", "-c"],
-        arguments=[
-            f"echo -n ${user}:${password} && "
-            f"auth=$(echo -n \"${user}:${password}\" | base64) && "
-            "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
-            f"/kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --build-arg=PYTHON_VERSION={python_version}"
-        ]
+        env_vars=env_vars
     )
+    def image_build_task():
+        import logging
+        import os
+        import base64
+        import json
+
+        # Configurar logging
+        logging.info("Starting image build task")
+
+        # Obtener las credenciales de las variables de entorno
+        user = os.getenv('user')
+        password = os.getenv('password')
+        path = os.getenv('path')
+        endpoint = os.getenv('endpoint')
+        python_version = os.getenv('python_version')
+
+        # Autenticación para Docker
+        logging.info(f"Authenticating user {user}")
+        auth = f"{user}:{password}".encode('utf-8')
+        auth_encoded = base64.b64encode(auth).decode('utf-8')
+
+        # Crear configuración de Docker
+        docker_config = {
+            "auths": {
+                "https://index.docker.io/v1/": {
+                    "auth": auth_encoded
+                }
+            }
+        }
+        config_path = '/kaniko/.docker/config.json'
+
+        # Guardar la configuración en el archivo
+        with open(config_path, 'w') as config_file:
+            json.dump(docker_config, config_file)
+
+        # Ejecutar Kaniko
+        logging.info("Running Kaniko executor")
+        # kaniko = Kaniko(
+        #     dockerfile=os.path.join(path, "Dockerfile"),
+        #     context=path,
+        #     destination=endpoint,
+        #     build_args={"PYTHON_VERSION": python_version},
+        #     verbosity=KanikoVerbosity.NORMAL
+        # )
+        # kaniko.execute()
+
+        os.system(f"/kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --build-arg=PYTHON_VERSION={python_version}")
+
+        logging.info("Image build completed successfully")
 
 # Llamar al DAG
 DAG_image_build_REST()
