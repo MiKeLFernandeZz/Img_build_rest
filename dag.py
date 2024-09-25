@@ -21,6 +21,8 @@ def DAG_image_build_REST():
     python_version = "{{ dag_run.conf.get('python_version') }}"
     use_gpu = "{{ dag_run.conf.get('use_gpu') }}"
 
+    path = '/git/Img_build_rest/docker'
+
     # Variables de entorno desde Airflow Variables y otras
     env_vars = {
         "POSTGRES_USERNAME": Variable.get("POSTGRES_USERNAME"),
@@ -67,6 +69,27 @@ def DAG_image_build_REST():
     #     volume_mounts=[k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")]
     # )
 
+    credentials_volume_mount = k8s.V1VolumeMount(
+        name="docker-config", mount_path="/kaniko/.docker"
+    )
+
+    credentials_container_volume_mounts = [
+        k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")
+    ]
+
+    credentials_volume = k8s.V1Volume(name="docker-config", empty_dir=k8s.V1EmptyDirVolumeSource())
+
+    credentials_container = k8s.V1Container(
+        name="create-config",
+        image="alpine:latest",
+        command=["sh", "-c"],
+        args=[
+            "mkdir -p /kaniko/.docker && "
+            f"echo -n ${user}:${password} && "
+        ],
+        volume_mounts=credentials_container_volume_mounts
+    )
+
     volume_mount = k8s.V1VolumeMount(
         name="dag-dependencies", mount_path="/git"
     )
@@ -88,7 +111,6 @@ def DAG_image_build_REST():
     # Crear el volumen para las dependencias de git
     # dag_dependencies_volume = k8s.V1Volume(name="dag-dependencies", empty_dir=k8s.V1EmptyDirVolumeSource())
 
-    path = '/git/Img_build_rest/docker'
 
     # Definición de la tarea para construir la imagen
     image_build_task = KubernetesPodOperator(
@@ -97,9 +119,9 @@ def DAG_image_build_REST():
         namespace='airflow',
         image='gcr.io/kaniko-project/executor:latest',
         env_vars=env_vars,
-        init_containers=[init_container],  # Añadir ambos init containers
-        volumes=[volume],
-        volume_mounts=[volume_mount],
+        init_containers=[init_container, credentials_container],  # Añadir ambos init containers
+        volumes=[volume, credentials_volume],
+        volume_mounts=[volume_mount, credentials_volume_mount],
         # cmds=["/kaniko/executor"],
         # arguments=[
         #     f"--dockerfile={path}/Dockerfile",
