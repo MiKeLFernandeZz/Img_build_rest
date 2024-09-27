@@ -1,53 +1,41 @@
-# Especifica la versión de Python como build-arg
-ARG PYTHON_VERSION="3.8.10"
-
+# Usa la imagen base de CUDA
 FROM nvidia/cuda:11.4.3-base-ubuntu20.04
 
-# Establece el directorio de trabajo en /app
+# Argumento para la versión de Python, se puede pasar en el build
+ARG PYTHON_VERSION=3.8
+
+# Establece variables de entorno para evitar preguntas durante la instalación
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instala dependencias y agrega el repositorio de deadsnakes para Python
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Establece Python como predeterminado
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1
+
+# Verifica la versión de Python instalada
+RUN python --version && python3 --version
+
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Asegúrate de que el argumento se mantenga disponible en el build
-ARG PYTHON_VERSION
+# Puedes agregar más pasos según tu necesidad (como copiar archivos, instalar pip, etc.)
+# Ejemplo: Copiar los archivos de la app
+# COPY . /app
 
-# Instala las dependencias necesarias para compilar Python
-RUN apt-get update && apt-get install -y \
-    wget \
-    build-essential \
-    libssl-dev \
-    zlib1g-dev \
-    libncurses5-dev \
-    libsqlite3-dev \
-    libreadline-dev \
-    libffi-dev \
-    libbz2-dev \
-    liblzma-dev \
-    curl  # Añadimos curl para descargar pip
-
-# Descarga, compila e instala la versión de Python especificada
-RUN wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
-    tar xzf Python-${PYTHON_VERSION}.tgz && \
-    cd Python-${PYTHON_VERSION} && \
-    ./configure --enable-optimizations && \
-    make -j$(nproc) && \
-    make altinstall
-
-# Instala pip
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    python${PYTHON_VERSION%%.*} get-pip.py && \
+# Ejemplo: Instalar pip y las dependencias
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python get-pip.py && \
     rm get-pip.py
 
-# Crea un alias para el binario de Python y pip, utilizando la versión especificada
-RUN ln -s /usr/local/bin/python${PYTHON_VERSION%%.*} /usr/bin/python3 && \
-    ln -s /usr/local/bin/pip${PYTHON_VERSION%%.*} /usr/bin/pip
-
-# Copia el archivo de dependencias al contenedor
-COPY requirements.txt /app/requirements.txt
-
-# Instala las dependencias de la aplicación
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Limpia los archivos de instalación
-RUN rm -rf /Python-${PYTHON_VERSION}*
-
-# Configura un alias para que el comando 'python' apunte a 'python3'
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Comando por defecto
+CMD ["python"]
