@@ -26,16 +26,19 @@ RUN python --version && python3 --version
 # Establece el directorio de trabajo
 WORKDIR /app
 
-# Puedes agregar más pasos según tu necesidad (como copiar archivos, instalar pip, etc.)
-# Ejemplo: Copiar los archivos de la app
-# COPY . /app
+# Copia el archivo requirements.txt al contenedor
+COPY requirements.txt .
 
-# Ejemplo: Instalar pip y las dependencias
+# Instala pip y las dependencias listadas en requirements.txt
 RUN apt-get update && \
     apt-get install -y curl && \
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py && \
-    rm get-pip.py
+    rm get-pip.py && \
+    pip install -r requirements.txt
+
+# Puedes copiar los archivos de la app aquí si lo deseas
+# COPY . /app
 
 # Comando por defecto
 CMD ["python"]
