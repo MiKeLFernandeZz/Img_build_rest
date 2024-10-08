@@ -155,10 +155,10 @@ def DAG_image_build_REST():
             f"--destination={endpoint}",
         ]
 
-        if python_version:
+        if python_version != None:
             args.append(f"--build-arg=PYTHON_VERSION={python_version}")
 
-        if apt_packages:
+        if apt_packages != None:
             args.append(f"--build-arg=APT_PACKAGES={apt_packages}")
 
         if cuda_version != None:
