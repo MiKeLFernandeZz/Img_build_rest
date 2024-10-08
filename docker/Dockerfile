@@ -10,7 +10,7 @@ WORKDIR /app
 # COPY requirements.txt .
 COPY ./requirements.txt /app/requirements.txt
 
-ARG APT_PACKAGES
+# ARG APT_PACKAGES
 RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
