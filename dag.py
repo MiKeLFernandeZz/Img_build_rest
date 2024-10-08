@@ -153,21 +153,18 @@ def DAG_image_build_REST():
             f"--dockerfile={path}/Dockerfile",
             f"--context={path}",
             f"--destination={endpoint}",
-            f"--build-arg=PYTHON_VERSION={python_version}",
-            f"--build-arg=APT_PACKAGES={apt_packages}",
-            f"--build-arg=CUDA_VERSION={cuda_version}"
         ]
 
+        if python_version:
+            args.append(f"--build-arg=PYTHON_VERSION={python_version}")
+
+        if packages:
+            args.append(f"--build-arg=APT_PACKAGES={packages}")
+
+        if cuda_version:
+            args.append(f"--build-arg=CUDA_VERSION={cuda_version}")
+
         logging.warning(f"Args: {args}")
-
-        # if python_version:
-        #     args.append(f"--build-arg=PYTHON_VERSION={python_version}")
-
-        # if packages:
-        #     args.append(f"--build-arg=APT_PACKAGES={packages}")
-
-        # if cuda_version:
-        #     args.append(f"--build-arg=CUDA_VERSION={cuda_version}")
 
         result = subprocess.run(
             args,
