@@ -145,16 +145,24 @@ def DAG_image_build_REST():
         logging.warning(f"Python version: {python_version}")
         logging.warning(f"Requirements: {requirements}")
 
+        args = [
+            "/kaniko/executor",
+            f"--dockerfile={path}/Dockerfile",
+            f"--context={path}",
+            f"--destination={endpoint}"
+        ]
+
+        if python_version:
+            args.append(f"--build-arg=PYTHON_VERSION={python_version}")
+
+        if packages:
+            args.append(f"--build-arg=APT_PACKAGES={packages}")
+
+        if cuda_version:
+            args.append(f"--build-arg=CUDA_VERSION={cuda_version}")
+
         result = subprocess.run(
-            [
-                "/kaniko/executor",
-                f"--dockerfile={path}/Dockerfile",
-                f"--context={path}",
-                f"--destination={endpoint}",
-                f"--build-arg=PYTHON_VERSION={python_version}",
-                f"--build-arg=APT_PACKAGES={packages}",
-                f"--build-arg=CUDA_VERSION={cuda_version}",
-            ],
+            args,
             check=True  # Lanza una excepción si el comando devuelve un código diferente de cero
         )
 
