@@ -152,17 +152,22 @@ def DAG_image_build_REST():
             "/kaniko/executor",
             f"--dockerfile={path}/Dockerfile",
             f"--context={path}",
-            f"--destination={endpoint}"
+            f"--destination={endpoint}",
+            f"--build-arg=PYTHON_VERSION={python_version}",
+            f"--build-arg=APT_PACKAGES={packages}",
+            f"--build-arg=CUDA_VERSION={cuda_version}"
         ]
 
-        if python_version:
-            args.append(f"--build-arg=PYTHON_VERSION={python_version}")
+        logging.warning(f"Args: {args}")
 
-        if packages:
-            args.append(f"--build-arg=APT_PACKAGES={packages}")
+        # if python_version:
+        #     args.append(f"--build-arg=PYTHON_VERSION={python_version}")
 
-        if cuda_version:
-            args.append(f"--build-arg=CUDA_VERSION={cuda_version}")
+        # if packages:
+        #     args.append(f"--build-arg=APT_PACKAGES={packages}")
+
+        # if cuda_version:
+        #     args.append(f"--build-arg=CUDA_VERSION={cuda_version}")
 
         result = subprocess.run(
             args,
