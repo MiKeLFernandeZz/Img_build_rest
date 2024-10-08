@@ -21,6 +21,8 @@ def DAG_image_build_REST():
     requirements = "{{ dag_run.conf.get('requirements') }}"
     python_version = "{{ dag_run.conf.get('python_version') }}"
     use_gpu = "{{ dag_run.conf.get('use_gpu') }}"
+    packages = "{{ dag_run.conf.get('packages') }}"
+    cuda_version = "{{ dag_run.conf.get('cuda_version') }}"
 
     # Variables de entorno desde Airflow Variables y otras
     env_vars = {
@@ -43,29 +45,10 @@ def DAG_image_build_REST():
         "password": password,
         "endpoint": endpoint,
         "python_version": python_version,
-        "use_gpu": use_gpu
+        "use_gpu": use_gpu,
+        "packages": packages,
+        "cuda_version": cuda_version
     }
-
-    # credentials_volume_mount = k8s.V1VolumeMount(
-    #     name="docker-config", mount_path="/kaniko/.docker"
-    # )
-
-    # credentials_container_volume_mounts = [
-    #     k8s.V1VolumeMount(mount_path="/kaniko/.docker", name="docker-config")
-    # ]
-
-    # credentials_volume = k8s.V1Volume(name="docker-config", empty_dir=k8s.V1EmptyDirVolumeSource())
-
-    # credentials_container = k8s.V1Container(
-    #     name="create-config",
-    #     image="alpine:latest",
-    #     command=["sh", "-c"],
-    #     args=[
-    #         "mkdir -p /kaniko/.docker && "
-    #         f"echo -n ${user}:${password}"
-    #     ],
-    #     volume_mounts=credentials_container_volume_mounts
-    # )
 
     volume_mount = k8s.V1VolumeMount(
         name="dag-dependencies", mount_path="/git"
@@ -84,36 +67,6 @@ def DAG_image_build_REST():
         command=["sh", "-c", "mkdir -p /git && cd /git && git clone -b main --single-branch https://github.com/MiKeLFernandeZz/Img_build_rest.git"],
         volume_mounts=init_container_volume_mounts
     )
-
-    # Crear el volumen para las dependencias de git
-    # dag_dependencies_volume = k8s.V1Volume(name="dag-dependencies", empty_dir=k8s.V1EmptyDirVolumeSource())
-
-
-    # Definición de la tarea para construir la imagen
-    # image_build_task = KubernetesPodOperator(
-    #     task_id='image_build',
-    #     name='image_build',
-    #     namespace='airflow',
-    #     image='mfernandezlabastida/kaniko:1.0',
-    #     env_vars=env_vars,
-    #     init_containers=[init_container],  # Añadir ambos init containers
-    #     volumes=[volume],
-    #     volume_mounts=[volume_mount],
-    #     # cmds=["/kaniko/executor"],
-    #     # arguments=[
-    #     #     f"--dockerfile={path}/Dockerfile",
-    #     #     f"--context={path}",
-    #     #     f"--destination={endpoint}",
-    #     #     f"--build-arg=PYTHON_VERSION={python_version}"
-    #     # ]
-    #     cmds=["sh", "-c"],
-    #     arguments=[
-    #         f"echo -n ${user}:${password} && "
-    #         f"auth=$(echo -n \"${user}:${password}\" | base64) && "
-    #         "echo '{\"auths\": {\"https://index.docker.io/v1/\": {\"auth\": \"'${auth}'\"}}}' > /kaniko/.docker/config.json && "
-    #         f"/kaniko/executor --dockerfile={path}/Dockerfile --context={path} --destination={endpoint} --build-arg=PYTHON_VERSION={python_version}"
-    #     ]
-    # )
 
     @task.kubernetes(
         image='mfernandezlabastida/kaniko:1.0',
@@ -198,7 +151,9 @@ def DAG_image_build_REST():
                 f"--dockerfile={path}/Dockerfile",
                 f"--context={path}",
                 f"--destination={endpoint}",
-                f"--build-arg=PYTHON_VERSION={python_version}"
+                f"--build-arg=PYTHON_VERSION={python_version}",
+                f"--build-arg=APT_PACKAGES={packages}",
+                f"--build-arg=CUDA_VERSION={cuda_version}",
             ],
             check=True  # Lanza una excepción si el comando devuelve un código diferente de cero
         )

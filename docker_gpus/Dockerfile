@@ -1,44 +1,42 @@
-# Usa la imagen base de CUDA
-FROM nvidia/cuda:11.4.3-base-ubuntu20.04
+# Usa build args para especificar las versiones de CUDA, Python y los paquetes de APT a instalar
+ARG CUDA_VERSION=12.6.1
+ARG PYTHON_VERSION=3.11.9
+ARG APT_PACKAGES="build-essential libssl-dev"
 
-# Argumento para la versión de Python, se puede pasar en el build
-ARG PYTHON_VERSION=3.8
+FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu22.04
 
-# Establece variables de entorno para evitar preguntas durante la instalación
 ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
-# Instala dependencias y agrega el repositorio de deadsnakes para Python
-RUN apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && \
-    apt-get install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Usar build arg para instalar paquetes adicionales de APT
+ARG APT_PACKAGES
+RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Establece Python como predeterminado
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python${PYTHON_VERSION} 1 && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1
+# Establecer el directorio HOME y trabajar allí
+ENV HOME="/root"
+WORKDIR ${HOME}
 
-# Verifica la versión de Python instalada
-RUN python --version && python3 --version
+# Instalar pyenv para gestionar versiones de Python
+RUN git clone --depth=1 https://github.com/pyenv/pyenv.git .pyenv
+ENV PYENV_ROOT="${HOME}/.pyenv"
+ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 
-# Establece el directorio de trabajo
+# Usar el build arg para establecer la versión de Python
+ARG PYTHON_VERSION
+RUN pyenv install ${PYTHON_VERSION} && \
+    pyenv global ${PYTHON_VERSION}
+
+# Verificar la instalación de Python
+RUN python --version
+
+# Establecer el directorio de trabajo para la aplicación
 WORKDIR /app
 
-# Copia el archivo requirements.txt al contenedor
+# Copiar el archivo de dependencias
 COPY requirements.txt .
 
-# Instala pip y las dependencias listadas en requirements.txt
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    python get-pip.py && \
-    rm get-pip.py && \
-    pip install -r requirements.txt
-
-# Puedes copiar los archivos de la app aquí si lo deseas
-# COPY . /app
-
-# Comando por defecto
-CMD ["python"]
+# Actualizar pip e instalar dependencias desde el archivo requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
