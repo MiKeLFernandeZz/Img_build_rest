@@ -95,7 +95,7 @@ def DAG_image_build_REST():
         python_version = os.getenv('python_version')
         use_gpu = os.getenv('use_gpu')
         requirements = os.getenv('requirements')
-        packages = os.getenv('packages')
+        apt_packages = os.getenv('packages')
         cuda_version = os.getenv('cuda_version')
         required_packages = ['mlflow', 'redis', 'psycopg2-binary']
         path = '/git/Img_build_rest/docker'
@@ -154,7 +154,7 @@ def DAG_image_build_REST():
             f"--context={path}",
             f"--destination={endpoint}",
             f"--build-arg=PYTHON_VERSION={python_version}",
-            f"--build-arg=APT_PACKAGES={packages}",
+            f"--build-arg=APT_PACKAGES={apt_packages}",
             f"--build-arg=CUDA_VERSION={cuda_version}"
         ]
 
