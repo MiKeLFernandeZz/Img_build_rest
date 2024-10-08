@@ -95,8 +95,11 @@ def DAG_image_build_REST():
         python_version = os.getenv('python_version')
         use_gpu = os.getenv('use_gpu')
         requirements = os.getenv('requirements')
+        packages = os.getenv('packages')
+        cuda_version = os.getenv('cuda_version')
         required_packages = ['mlflow', 'redis', 'psycopg2-binary']
         path = '/git/Img_build_rest/docker'
+
 
         # Verificar si se va a usar GPU
         logging.warning(f"Use GPU: {use_gpu}")
