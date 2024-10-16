@@ -125,7 +125,7 @@ def DAG_image_build_REST():
 
         # Modificar las dependencias de apt
         try:
-            apt_install_prefix = "RUN apt-get update && apt-get install -y --no-install-recommends build-essential"
+            apt_install_prefix = "RUN apt-get update && apt-get install -y --no-install-recommends"
 
             with open(f'{path}/Dockerfile', 'r') as f:
                 dockerfile_lines = f.readlines()
