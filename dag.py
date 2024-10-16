@@ -125,7 +125,7 @@ def DAG_image_build_REST():
 
         # Modificar las dependencias de apt
         try:
-            apt_install_prefix = "RUN apt-get update && apt-get install -y --no-install-recommends build-essential libssl-dev"
+            apt_install_prefix = "RUN apt-get update && apt-get install -y --no-install-recommends build-essential"
 
             with open(f'{path}/Dockerfile', 'r') as f:
                 dockerfile_lines = f.readlines()
@@ -134,7 +134,7 @@ def DAG_image_build_REST():
             for line in dockerfile_lines:
                 if line.strip().startswith(apt_install_prefix):
                     # Reemplazar la línea con los nuevos paquetes
-                    updated_line = f"{apt_install_prefix} {apt_packages} \\\n" \
+                    updated_line = f"{apt_install_prefix} build-essential {apt_packages} \\\n" \
                                 "    && apt-get clean \\\n" \
                                 "    && rm -rf /var/lib/apt/lists/*\n"
                     updated_lines.append(updated_line)
