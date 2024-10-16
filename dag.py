@@ -123,25 +123,28 @@ def DAG_image_build_REST():
                 f.write(package + '\n')
 
         # Modificar las dependencias de apt
-        apt_install_prefix = "RUN apt-get update && apt-get install -y --no-install-recommends build-essential libssl-dev"
+        try:
+            apt_install_prefix = "RUN apt-get update && apt-get install -y --no-install-recommends build-essential libssl-dev"
 
-        with open(f'{path}/Dockerfile', 'r') as f:
-            dockerfile_lines = f.readlines()
+            with open(f'{path}/Dockerfile', 'r') as f:
+                dockerfile_lines = f.readlines()
 
-        updated_lines = []
-        for line in dockerfile_lines:
-            if line.strip().startswith(apt_install_prefix):
-                # Reemplazar la línea con los nuevos paquetes
-                updated_line = f"{apt_install_prefix} {apt_packages} \\\n" \
-                               "    && apt-get clean \\\n" \
-                               "    && rm -rf /var/lib/apt/lists/*\n"
-                updated_lines.append(updated_line)
-            else:
-                updated_lines.append(line)
+            updated_lines = []
+            for line in dockerfile_lines:
+                if line.strip().startswith(apt_install_prefix):
+                    # Reemplazar la línea con los nuevos paquetes
+                    updated_line = f"{apt_install_prefix} {apt_packages} \\\n" \
+                                "    && apt-get clean \\\n" \
+                                "    && rm -rf /var/lib/apt/lists/*\n"
+                    updated_lines.append(updated_line)
+                else:
+                    updated_lines.append(line)
 
-        # Escribir el nuevo contenido en el Dockerfile
-        with open(f'{path}/Dockerfile', 'r', 'w') as file:
-            file.writelines(updated_lines)
+            # Escribir el nuevo contenido en el Dockerfile
+            with open(f'{path}/Dockerfile', 'w') as file:
+                file.writelines(updated_lines)
+        except Exception as e:
+            logging.error(f"Error while updating apt packages: {e}")
 
         # Autenticación para Docker
         logging.warning(f"Authenticating user {user}")
