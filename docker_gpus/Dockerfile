@@ -2,7 +2,7 @@ ARG CUDA_VERSION=11.4.3
 ARG PYTHON_VERSION=3.11.9
 ARG APT_PACKAGES="build-essential libssl-dev"
 
-FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu20.04
+FROM nvidia/cuda:${CUDA_VERSION}
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC

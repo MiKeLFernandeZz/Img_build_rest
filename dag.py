@@ -133,7 +133,7 @@ def DAG_image_build_REST():
             for line in dockerfile_lines:
                 if line.strip().startswith(apt_install_prefix):
                     # Reemplazar la línea con los nuevos paquetes
-                    updated_line = f"{apt_install_prefix} build-essential {apt_packages} \\\n" \
+                    updated_line = f"{apt_install_prefix} build-essential git {apt_packages} \\\n" \
                                 "    && apt-get clean \\\n" \
                                 "    && rm -rf /var/lib/apt/lists/*\n"
                     updated_lines.append(updated_line)
