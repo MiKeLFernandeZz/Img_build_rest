@@ -1,7 +1,6 @@
-# Usa build args para especificar las versiones de CUDA, Python y los paquetes de APT a instalar
-ARG CUDA_VERSION="12.6.1"
-ARG PYTHON_VERSION="3.11.9"
-ARG APT_PACKAGES="build-essential libssl-dev"
+ARG CUDA_VERSION=12.6.1
+ARG PYTHON_VERSION=3.11.9
+ARG APT_PACKAGES=build-essential libssl-dev
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu22.04
 
