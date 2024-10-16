@@ -46,8 +46,8 @@ def DAG_image_build_REST():
         "endpoint": endpoint,
         "python_version": python_version,
         "use_gpu": use_gpu,
+        "cuda_version": cuda_version,
         "packages": packages,
-        "cuda_version": cuda_version
     }
 
     volume_mount = k8s.V1VolumeMount(
