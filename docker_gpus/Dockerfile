@@ -1,6 +1,6 @@
 ARG CUDA_VERSION=12.6.1
 ARG PYTHON_VERSION=3.11.9
-ARG APT_PACKAGES=build-essential libssl-dev
+ARG APT_PACKAGES="build-essential libssl-dev"
 
 FROM nvidia/cuda:${CUDA_VERSION}-base-ubuntu22.04
 
@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
 # Usar build arg para instalar paquetes adicionales de APT
-# ARG APT_PACKAGES
+ARG APT_PACKAGES
 RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION="3.9.17"
+ARG PYTHON_VERSION=3.9.17
 ARG APT_PACKAGES="build-essential libssl-dev"
 
 FROM python:${PYTHON_VERSION}
