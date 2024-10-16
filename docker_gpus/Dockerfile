@@ -9,9 +9,7 @@ ENV TZ=Etc/UTC
 
 # Usar build arg para instalar paquetes adicionales de APT
 ARG APT_PACKAGES
-RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Establecer el directorio HOME y trabajar allí
 ENV HOME="/root"
