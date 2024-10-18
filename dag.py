@@ -125,7 +125,9 @@ def DAG_image_build_REST():
         # Modificar las dependencias de apt
         try:
             apt_install_prefix = "RUN apt-get update && apt-get install -y --no-install-recommends"
-            default_apt_packages = "build-essential git curl wget zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libffi-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev"
+            default_apt_packages = "build-essential"
+            if use_gpu == 'true':
+                default_apt_packages = "build-essential git curl wget zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libffi-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev"
 
             with open(f'{path}/Dockerfile', 'r') as f:
                 dockerfile_lines = f.readlines()
