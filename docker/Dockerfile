@@ -11,9 +11,7 @@ WORKDIR /app
 COPY ./requirements.txt /app/requirements.txt
 
 # ARG APT_PACKAGES
-RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --no-cache-dir -r requirements.txt
