@@ -174,16 +174,16 @@ def DAG_image_build_REST():
             with open(config_path, 'w') as config_file:
                 json.dump(docker_config, config_file)
 
-        def download_artifacts(model_uri):
+        def download_artifacts(model_uri, path):
             mlflow.set_tracking_uri("http://mlflow-tracking.mlflow.svc.cluster.local:5000")
 
-            local_path = mlflow.artifacts.download_artifacts(model_uri, dst_path=".")
+            local_path = mlflow.artifacts.download_artifacts(model_uri, dst_path=path)
 
             # Buscar el archivo model.pkl y moverlo a la carpeta local_path en caso de que se encuentre en una subcarpeta
             for root, dirs, files in os.walk(local_path):
                 for file in files:
                     if file.startswith("model"):
-                        print(f"Encontrado archivo model.pkl en: {root}")
+                        logging.info(f"Encontrado archivo model.pkl en: {root}")
                         os.rename(os.path.join(root, file), os.path.join(local_path + '/model', file))
 
         def remove_entrypoint():
