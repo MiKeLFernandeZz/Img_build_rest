@@ -224,7 +224,7 @@ def DAG_image_build_REST():
 
         # Descargar los artefactos del modelo
         if model_uri:
-            download_artifacts(model_uri)
+            download_artifacts(model_uri, path)
         else:
             # crear carpeta artifacts
             os.makedirs(f'{path}/artifacts/model', exist_ok=True)
