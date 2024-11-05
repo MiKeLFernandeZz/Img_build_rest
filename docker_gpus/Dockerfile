@@ -34,6 +34,13 @@ WORKDIR /app
 # Copiar el archivo de dependencias
 COPY requirements.txt .
 
+# Copiar los archivos de artefactos
+COPY ./artifacts /app/artifacts
+
+COPY ./app.py /app/app.py
+
 # Actualizar pip e instalar dependencias desde el archivo requirements.txt
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
+
+ENTRYPOINT ["python", "app.py"]
