@@ -225,6 +225,9 @@ def DAG_image_build_REST():
         # Descargar los artefactos del modelo
         if model_uri:
             download_artifacts(model_uri)
+        else:
+            # crear carpeta artifacts
+            os.makedirs(f'{path}/artifacts/model', exist_ok=True)
 
         # Remover el entrypoint si no se va a usar FastAPI
         if not server_py:
