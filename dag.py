@@ -202,6 +202,10 @@ def DAG_image_build_REST():
             except Exception as e:
                 logging.error(f"Error while removing entrypoint: {e}")
 
+        def create_app_file(server_py):
+            with open(f'{path}/app.py', 'w') as f:
+                f.write(server_py)
+
 
         # Verificar si se va a usar GPU
         logging.warning(f"Use GPU: {use_gpu}")
@@ -225,6 +229,8 @@ def DAG_image_build_REST():
         # Remover el entrypoint si no se va a usar FastAPI
         if not server_py:
             remove_entrypoint()
+        else:
+            create_app_file(server_py)
 
         # Ejecutar Kaniko
         logging.warning("Running Kaniko executor")
