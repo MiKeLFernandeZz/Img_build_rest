@@ -119,7 +119,7 @@ def DAG_image_build_REST():
             requirements = ' '.join(requirements_list)
 
             if server_py:
-                requirements += ' fastapi uvicorn pydantic pandas'
+                requirements += ' fastapi uvicorn pydantic pandas typing-extensions'
 
             # requirement format --> 'package1==1.0.0 package2==2.0.0' 
             packages = requirements.split()
