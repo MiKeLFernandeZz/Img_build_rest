@@ -8,15 +8,15 @@ WORKDIR /app
 
 # Crear un archivo temporal para las dependencias
 # COPY requirements.txt .
-COPY ./requirements.txt /app/requirements.txt
+# COPY ./requirements.txt /app/requirements.txt
 
 # Copiar los archivos de artefactos
-COPY ./artifacts /app/artifacts
-
-COPY ./app.py /app/app.py
+# COPY ./artifacts /app/artifacts
+# COPY ./app.py /app/app.py
+COPY . /app/
 
 # ARG APT_PACKAGES
-# RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --upgrade pip setuptools && pip install --no-cache-dir --ignore-installed -r requirements.txt
