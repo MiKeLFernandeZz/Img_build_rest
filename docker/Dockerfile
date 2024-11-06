@@ -21,4 +21,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES}
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --upgrade pip setuptools && pip install --no-cache-dir --ignore-installed -r requirements.txt
 
-CMD ["python", "app.py"]
+ENTRYPOINT ["python", "app.py"]
