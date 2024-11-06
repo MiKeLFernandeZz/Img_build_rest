@@ -19,6 +19,6 @@ COPY ./app.py /app/app.py
 # RUN apt-get update && apt-get install -y --no-install-recommends ${APT_PACKAGES} && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Instala las dependencias especificadas en el archivo temporal
-RUN pip install --upgrade pip setuptools && pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip setuptools && pip install --no-cache-dir --ignore-installed -r requirements.txt
 
 CMD ["python", "app.py"]
