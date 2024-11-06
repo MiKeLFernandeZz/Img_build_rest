@@ -224,7 +224,7 @@ def DAG_image_build_REST():
 
         # Descargar los artefactos del modelo
         logging.warning(f"Model URI: {model_uri}")
-        if model_uri:
+        if model_uri != 'null':
             download_artifacts(model_uri, path)
         else:
             # crear carpeta artifacts
@@ -232,7 +232,7 @@ def DAG_image_build_REST():
 
         # Remover el entrypoint si no se va a usar FastAPI
         logging.warning(f"Server Py: {server_py}")
-        if not server_py:
+        if server_py == 'null':
             remove_entrypoint()
         else:
             create_app_file(server_py)
