@@ -247,6 +247,7 @@ def DAG_image_build_REST():
             f"--dockerfile={path}/Dockerfile",
             f"--context={path}",
             f"--destination={endpoint}",
+            f"--cache=false"
         ]
 
         if python_version and python_version != "None":
