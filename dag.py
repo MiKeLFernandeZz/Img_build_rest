@@ -226,9 +226,9 @@ def DAG_image_build_REST():
         logging.warning(f"Model URI: {model_uri}")
         if model_uri != 'null':
             download_artifacts(model_uri, path)
-        else:
-            # crear carpeta artifacts
-            os.makedirs(f'{path}/artifacts/model', exist_ok=True)
+        # else:
+        #     # crear carpeta artifacts
+        #     os.makedirs(f'{path}/artifacts/model', exist_ok=True)
 
         # Remover el entrypoint si no se va a usar FastAPI
         logging.warning(f"Server Py: {server_py}")
