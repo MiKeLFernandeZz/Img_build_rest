@@ -21,4 +21,4 @@ COPY ./app.py /app/app.py
 # Instala las dependencias especificadas en el archivo temporal
 RUN pip install --upgrade pip setuptools && pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python", "app.py"]
+CMD ["python", "app.py"]
