@@ -13,12 +13,12 @@ model_path = "artifacts/model/model.pkl"  # Reemplaza con la ruta a tu modelo
 with open(model_path, "rb") as model_file:
     model = pickle.load(model_file)
 
-# Definir el esquema de entrada para las predicciones
-class PredictionInput(BaseModel):
-    # Define aquí los atributos que espera tu modelo
-    # Por ejemplo, si el modelo espera dos columnas 'feature1' y 'feature2'
-    feature1: float
-    feature2: float
+# # Definir el esquema de entrada para las predicciones
+# class PredictionInput(BaseModel):
+#     # Define aquí los atributos que espera tu modelo
+#     # Por ejemplo, si el modelo espera dos columnas 'feature1' y 'feature2'
+#     feature1: float
+#     feature2: float
 
 @app.post("/predict")
 def predict(input_data):
