@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import pandas as pd
 import os
+import numpy as np
 
 # Definir el modelo FastAPI
 app = FastAPI()
@@ -20,12 +21,12 @@ class PredictionInput(BaseModel):
     feature2: float
 
 @app.post("/predict")
-def predict(input_data: PredictionInput):
+def predict(input_data):
     # Convertir los datos de entrada a un DataFrame
-    input_df = pd.DataFrame([input_data.dict()])
+    input_df = np.array([*eval(input_data).values()]).reshape(1, -1)
     
     # Realizar la predicción
-    prediction = model.predict(input_df)
+    prediction = model.predict(input_df)[0]
     
     # Retornar la predicción
     return {"prediction": prediction.tolist()}
