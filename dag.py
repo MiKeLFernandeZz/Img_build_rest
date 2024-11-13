@@ -220,7 +220,8 @@ def DAG_image_build_REST():
         modify_dependencies(path, apt_packages, use_gpu)
 
         # Autenticación para Docker
-        create_credentials_file(user, password)
+        if(user and password):
+            create_credentials_file(user, password)
 
         # Descargar los artefactos del modelo
         # logging.warning(f"Model URI: {model_uri}")
